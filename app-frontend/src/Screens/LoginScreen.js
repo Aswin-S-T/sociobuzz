@@ -9,10 +9,13 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import AlertModal from "../Components/AlertModal";
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const handleLogin = async () => {
     // Make API call to the Node.js backend
@@ -31,11 +34,16 @@ const LoginScreen = ({ navigation }) => {
         // Navigate to the home page on successful login
         navigation.navigate("Home", { userId: data.userId });
       } else {
-        alert(data.message);
+        setModalMessage(data.message);
+        setModalVisible(true);
       }
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
   };
 
   return (
@@ -47,7 +55,7 @@ const LoginScreen = ({ navigation }) => {
         style={{ height: 200 }}
       />
 
-      <View style={{marginTop:40}}>
+      <View style={{ marginTop: 40 }}>
         <Text style={{ color: "#444" }}>Username</Text>
         <TextInput
           style={{
@@ -104,6 +112,11 @@ const LoginScreen = ({ navigation }) => {
               Login
             </Text>
           </TouchableOpacity>
+          <AlertModal
+            visible={modalVisible}
+            message={modalMessage}
+            onClose={closeModal}
+          />
           <View
             style={{
               marginTop: 20,
@@ -112,7 +125,9 @@ const LoginScreen = ({ navigation }) => {
               alignItems: "center",
             }}
           >
-             <Text style={{ color: "#444" ,top:-10,position:'relative'}}>Foregot password?</Text>
+            <Text style={{ color: "#444", top: -10, position: "relative" }}>
+              Foregot password?
+            </Text>
             <Text style={{ color: "#444" }}>OR</Text>
             <TouchableOpacity
               style={{
