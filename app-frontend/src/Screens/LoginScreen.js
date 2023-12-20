@@ -1,7 +1,14 @@
 // App.js
 
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
@@ -32,79 +39,105 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ backgroundColor: "#00d9a3", height: "100%", padding: 15 }}>
-      <Text style={{ color: "white" }}>Username</Text>
-      <TextInput
-        style={{
-          marginTop: 20,
-          backgroundColor: "white",
-          padding: 10,
-          border: "none",
-          outline: "none",
-          borderRadius: 20,
-        }}
-        placeholder="Username"
-        value={username}
-        onChangeText={(text) => setUsername(text)}
+    <View style={{ backgroundColor: "#ffff", height: "100%", padding: 15 }}>
+      <Image
+        source={
+          "https://img.freepik.com/free-vector/usability-testing-concept-illustration_114360-2456.jpg"
+        }
+        style={{ height: 200 }}
       />
-      <View style={{ marginTop: 40 }}>
-        <Text style={{ color: "white" }}>Password</Text>
+
+      <View style={{marginTop:40}}>
+        <Text style={{ color: "#444" }}>Username</Text>
         <TextInput
           style={{
             marginTop: 20,
+            backgroundColor: "white",
+            border: "1px solid #74DF00",
+            padding: 10,
+            outline: "none",
             borderRadius: 20,
-            backgroundColor: "white",
-            padding: 10,
-            border: "none",
-            outline: "none",
           }}
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={(text) => setPassword(text)}
+          placeholder="Username"
+          value={username}
+          onChangeText={(text) => setUsername(text)}
         />
-      </View>
-      <View style={{ marginTop: 20 }}>
-        <TouchableOpacity
-          style={{
-            borderRadius: 40,
-            backgroundColor: "white",
-            padding: 10,
-            border: "none",
-            outline: "none",
-            marginTop: 10,
-          }}
-          onPress={handleLogin}
-        >
-          <Text style={{ display: "flex", justifyContent: "center" }}>
-            Login
-          </Text>
-        </TouchableOpacity>
-        <View
-          style={{
-            marginTop: 20,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "#ffff" }}>OR</Text>
+        <View style={{ marginTop: 40 }}>
+          <Text style={{ color: "#444" }}>Password</Text>
+          <TextInput
+            style={{
+              marginTop: 20,
+              borderRadius: 20,
+              backgroundColor: "white",
+              padding: 10,
+              border: "1px solid #74DF00",
+              outline: "none",
+              borderBottomWidth: 2,
+              borderBottomColor: "#74DF00",
+            }}
+            placeholder="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+        </View>
+        <View style={{ marginTop: 20 }}>
           <TouchableOpacity
             style={{
               borderRadius: 40,
-              backgroundColor: "white",
-              fontFamily: "sans-serif",
-              width: "100%",
+              backgroundColor: "#74DF00",
+              color: "#fff",
               padding: 10,
               border: "none",
               outline: "none",
               marginTop: 10,
             }}
+            onPress={handleLogin}
           >
-            <Text style={{ display: "flex", justifyContent: "center" }}>
-              Create new Account
+            <Text
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                color: "#fff",
+              }}
+            >
+              Login
             </Text>
           </TouchableOpacity>
+          <View
+            style={{
+              marginTop: 20,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+             <Text style={{ color: "#444" ,top:-10,position:'relative'}}>Foregot password?</Text>
+            <Text style={{ color: "#444" }}>OR</Text>
+            <TouchableOpacity
+              style={{
+                borderRadius: 40,
+                backgroundColor: "#74DF00",
+                color: "#fff",
+                fontFamily: "sans-serif",
+                width: "100%",
+                padding: 10,
+                border: "none",
+                outline: "none",
+                marginTop: 10,
+              }}
+            >
+              <Text
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  color: "#fff",
+                }}
+              >
+                Create new Account
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
