@@ -4,16 +4,19 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "./src/Screens/LoginScreen";
 import HomeScreen from "./src/Screens/HomeScreen";
+import { createStackNavigator } from "@react-navigation/stack";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="Login" component={LoginScreen} />
-        <Tab.Screen name="Home" component={HomeScreen} />
-      </Tab.Navigator>
+      {/* <Stack.Navigator initialRouteName="Login"> */}
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
