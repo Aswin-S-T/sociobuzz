@@ -71,7 +71,7 @@ const TabNavigator = createMaterialBottomTabNavigator(
           <Ionicons
             name="md-person-circle-outline"
             size={tabInfo.focused ? 26 : 20}
-            color={tabInfo.tintColor}
+            color={"#74DF00"}
           />
         ),
       },
