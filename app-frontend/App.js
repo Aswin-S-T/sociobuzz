@@ -21,11 +21,11 @@ export default function App() {
             headerTitle: "Crowdly",
             headerStyle: {
               backgroundColor: "#fff",
-              shadowColor: "rgba(0, 0, 0, 0.1)", // Shadow color
-              shadowOffset: { width: 0, height: 2 }, // Shadow offset
-              shadowOpacity: 0.8, // Shadow opacity
-              shadowRadius: 20, // Shadow radius
-              elevation: 5, // Elevation for Android
+              shadowColor: "rgba(0, 0, 0, 0.1)",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.8,
+              shadowRadius: 20,
+              elevation: 5,
             },
 
             headerTitleStyle: {
