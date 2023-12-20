@@ -32,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
 
       if (data.success) {
         // Navigate to the home page on successful login
-        navigation.navigate("Home", { userId: data.userId });
+        navigation.navigate("Crowdly", { userId: data.userId });
       } else {
         setModalMessage(data.message);
         setModalVisible(true);
