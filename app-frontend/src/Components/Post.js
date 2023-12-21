@@ -28,12 +28,10 @@ const Post = () => {
   };
 
   const handleLikedUsersPress = () => {
-    // Fetch liked users data or toggle the liked users popup
     setShowLikedUsers(!showLikedUsers);
   };
 
   const handleCommentsPress = () => {
-    // Fetch comments data or toggle the comments popup
     setShowComments(!showComments);
   };
 
