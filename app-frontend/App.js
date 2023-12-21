@@ -20,8 +20,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      {/* <Stack.Navigator initialRouteName="Login"></Stack.Navigator> */}
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen
           name="Crowdly"
           component={HomeScreen}
