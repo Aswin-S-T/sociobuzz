@@ -3,8 +3,16 @@ import { View, Text, FlatList, Image, StyleSheet } from "react-native";
 
 const Notification = () => {
   const notifications = [
-    { id: "1", text: "You have a new message", imageUrl: "https://placekitten.com/50/50" },
-    { id: "2", text: "A friend mentioned you in a post", imageUrl: "https://placekitten.com/50/51" },
+    {
+      id: "1",
+      text: "You have a new message",
+      imageUrl: "https://placekitten.com/50/50",
+    },
+    {
+      id: "2",
+      text: "A friend mentioned you in a post",
+      imageUrl: "https://placekitten.com/50/51",
+    },
     // Add more notifications as needed
   ];
 
@@ -23,7 +31,8 @@ const Notification = () => {
       <View style={styles.headerContainer}>
         <Text style={styles.notificationHeaderText}>Notifications</Text>
         <Text style={styles.notificationSubText}>
-          You have <Text style={styles.notificationCount}>4 messages</Text> Today
+          You have <Text style={styles.notificationCount}>4 messages</Text>{" "}
+          Today
         </Text>
       </View>
 
@@ -79,7 +88,7 @@ const styles = StyleSheet.create({
   notificationText: {
     fontFamily: "sans-serif",
     color: "#333",
-    fontWeight: "600",
+    fontWeight: "bold",
     marginBottom: 5,
   },
   notificationTime: {
