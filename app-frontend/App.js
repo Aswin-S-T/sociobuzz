@@ -20,7 +20,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen
           name="Crowdly"
           component={HomeScreen}
@@ -65,9 +65,9 @@ export default function App() {
           name="Login"
           component={LoginScreen}
           options={{
-            headerTitle: "Login ",
+            headerTitle: "Login   Here",
             headerStyle: {
-              backgroundColor: "#fff",
+              backgroundColor: "#0E3D8B",
               shadowColor: "rgba(0, 0, 0, 0.1)",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.8,
@@ -75,7 +75,7 @@ export default function App() {
               elevation: 5,
             },
             headerTitleStyle: {
-              color: "#74DF00",
+              color: "#0E3D8B",
               fontWeight: "bold",
               fontFamily: "sans-serif",
             },
@@ -100,8 +100,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
     paddingLeft: 5,
     width: "80%",
-    borderTopWidth:0,
-    borderLeftWidth:0,
-    borderRightWidth:0
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
   },
 });
