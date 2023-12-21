@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     borderWidth: 2,
-    borderColor: "#74DF00",
+    borderColor: "#0EBD60",
   },
   username: {
     marginTop: 5,

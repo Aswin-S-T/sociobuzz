@@ -267,6 +267,7 @@ const styles = StyleSheet.create({
   postComment: {
     flex: 1,
     marginRight: 10,
+    fontFamily: "sans-serif",
   },
   dropdownOptions: {
     position: "absolute",

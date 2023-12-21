@@ -19,7 +19,7 @@ const TabNavigator = createMaterialBottomTabNavigator(
           <Ionicons
             name="md-home"
             size={tabInfo.focused ? 20 : 18}
-            color={"#74DF00"}
+            color={"#0E3D8B"}
           />
         ),
       },
@@ -32,7 +32,7 @@ const TabNavigator = createMaterialBottomTabNavigator(
           <Ionicons
             name="search"
             size={tabInfo.focused ? 20 : 18}
-            color={"#74DF00"}
+            color={"#0E3D8B"}
           />
         ),
       },
@@ -45,7 +45,7 @@ const TabNavigator = createMaterialBottomTabNavigator(
           <Ionicons
             name="chatbox-sharp"
             size={tabInfo.focused ? 20 : 18}
-            color={"#74DF00"}
+            color={"#0E3D8B"}
           />
         ),
       },
@@ -58,7 +58,7 @@ const TabNavigator = createMaterialBottomTabNavigator(
           <Ionicons
             name="notifications"
             size={tabInfo.focused ? 20 : 18}
-            color={"#74DF00"}
+            color={"#0E3D8B"}
           />
         ),
       },
@@ -71,7 +71,7 @@ const TabNavigator = createMaterialBottomTabNavigator(
           <Ionicons
             name="md-person-circle-outline"
             size={tabInfo.focused ? 26 : 20}
-            color={"#74DF00"}
+            color={"#0E3D8B"}
           />
         ),
       },

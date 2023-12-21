@@ -12,8 +12,8 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        {/* <Stack.Navigator> */}
+      {/* <Stack.Navigator initialRouteName="Login"> */}
+        <Stack.Navigator>
         <Stack.Screen
           name="Crowdly"
           component={HomeScreen}
@@ -29,7 +29,7 @@ export default function App() {
             },
 
             headerTitleStyle: {
-              color: "#74DF00",
+              color: "#0E3D8B",
               fontWeight: "bold",
               fontFamily: "sans-serif",
             },
