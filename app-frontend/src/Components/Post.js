@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   postImage: {
     width: "100%",
-    height: 200,
+    height: 400,
   },
   postActions: {
     flexDirection: "row",
