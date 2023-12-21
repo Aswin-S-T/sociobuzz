@@ -16,26 +16,31 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    // Make API call to the Node.js backend
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      setLoading(true);
+      const response = await fetch(
+        "https://crowdly-2.onrender.com/api/v1/user/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: username, password }),
+        }
+      );
 
       const data = await response.json();
 
       if (data.success) {
-        // Navigate to the home page on successful login
         navigation.navigate("Crowdly", { userId: data.userId });
+        setLoading(false);
       } else {
-        setModalMessage(data.message);
+        setModalMessage("Invalid email or password");
         setModalVisible(true);
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -168,7 +173,7 @@ const LoginScreen = ({ navigation }) => {
                 color: "#fff",
               }}
             >
-              Login
+              {loading ? <>Please wait....</> : <>Login</>}
             </Text>
           </TouchableOpacity>
           <AlertModal

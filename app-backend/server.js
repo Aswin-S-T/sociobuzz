@@ -24,32 +24,32 @@ db.connect();
 app.use("/api/v1/user", userRouter);
 
 app.get("/", (req, res) => {
-	res.send("Nodejs started....");
+  res.send("Nodejs started....");
 });
 
 const server = app.listen(port, () => {
-	console.log(`Server is running at the port ${port}`);
+  console.log(`Server is running at the port ${port}`);
 });
 
-const io = socket(server, {
-	cors: {
-		origin: "https://aswins-social-media-app.netlify.app/",
-		credentials: true,
-	},
-});
+// const io = socket(server, {
+// 	cors: {
+// 		origin: "https://aswins-social-media-app.netlify.app/",
+// 		credentials: true,
+// 	},
+// });
 
-global.onlineUsers = new Map();
-io.on("connection", (socket) => {
-	console.log("CONNECTED================");
-	global.chatSocket = socket;
-	socket.on("add-user", (userId) => {
-		onlineUsers.set(userId, socket.id);
-	});
+// global.onlineUsers = new Map();
+// io.on("connection", (socket) => {
+// 	console.log("CONNECTED================");
+// 	global.chatSocket = socket;
+// 	socket.on("add-user", (userId) => {
+// 		onlineUsers.set(userId, socket.id);
+// 	});
 
-	socket.on("send-msg", (data) => {
-		const sendUserSocket = onlineUsers.get(data.to);
-		if (sendUserSocket) {
-			socket.to(sendUserSocket).emit("msg-recieve", data.msg);
-		}
-	});
-});
+// 	socket.on("send-msg", (data) => {
+// 		const sendUserSocket = onlineUsers.get(data.to);
+// 		if (sendUserSocket) {
+// 			socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+// 		}
+// 	});
+// });
