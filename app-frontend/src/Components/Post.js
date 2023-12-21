@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,9 +8,11 @@ import {
   ScrollView,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const Post = () => {
   const [showOptions, setShowOptions] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleOptionsPress = () => {
     setShowOptions(!showOptions);
@@ -20,224 +22,89 @@ const Post = () => {
     setShowOptions(false);
   };
 
+  const [post, setPost] = useState([]);
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchData = async () => {
+      const response = await fetch(
+        "https://crowdly-2.onrender.com/api/v1/user/all-post"
+      );
+      const data = await response?.json();
+      setPost(data?.data);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
   return (
     <ScrollView>
-      <View style={styles.postContainer}>
-        <View style={styles.postHeader}>
-          <Image
-            source={{ uri: "https://placekitten.com/50/50" }}
-            style={styles.avatar}
-          />
-
-          <Text style={styles.postComment}>This is a post comment</Text>
-
-          <TouchableOpacity onPress={handleOptionsPress}>
-            <MaterialCommunityIcons
-              name="dots-vertical"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          {showOptions && (
-            <View style={styles.dropdownOptions}>
-              <TouchableOpacity onPress={handleDeletePress}>
-                <Text>Delete</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-
-        <Image
-          source={{ uri: "https://placekitten.com/300/200" }}
-          style={styles.postImage}
+      {console.log("Post--------------", post)}
+      {loading ? (
+        <Spinner
+          visible={loading}
+          textContent={"Loading..."}
+          textStyle={{ color: "#FFF" }}
         />
+      ) : (
+        post &&
+        post.length > 0 &&
+        post.map((p) => (
+          <>
+            <View style={styles.postContainer}>
+              <View style={styles.postHeader}>
+                <Image source={{ uri: p?.image }} style={styles.avatar} />
 
-        <View style={styles.postActions}>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="heart-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="comment-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="bookmark-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.postContainer}>
-        <View style={styles.postHeader}>
-          <Image
-            source={{ uri: "https://placekitten.com/50/50" }}
-            style={styles.avatar}
-          />
+                <Text style={styles.postComment}>{p?.caption}</Text>
 
-          <Text style={styles.postComment}>This is a post comment</Text>
+                <TouchableOpacity onPress={handleOptionsPress}>
+                  <MaterialCommunityIcons
+                    name="dots-vertical"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+                {showOptions && (
+                  <View style={styles.dropdownOptions}>
+                    <TouchableOpacity onPress={handleDeletePress}>
+                      <Text>Delete</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
 
-          <TouchableOpacity onPress={handleOptionsPress}>
-            <MaterialCommunityIcons
-              name="dots-vertical"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          {showOptions && (
-            <View style={styles.dropdownOptions}>
-              <TouchableOpacity onPress={handleDeletePress}>
-                <Text>Delete</Text>
-              </TouchableOpacity>
+              <Image
+                source={{ uri: "https://placekitten.com/300/200" }}
+                style={styles.postImage}
+              />
+
+              <View style={styles.postActions}>
+                <TouchableOpacity>
+                  <MaterialCommunityIcons
+                    name="heart-outline"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <MaterialCommunityIcons
+                    name="comment-outline"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <MaterialCommunityIcons
+                    name="bookmark-outline"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
-          )}
-        </View>
-
-        <Image
-          source={{ uri: "https://placekitten.com/300/200" }}
-          style={styles.postImage}
-        />
-
-        <View style={styles.postActions}>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="heart-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="comment-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="bookmark-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.postContainer}>
-        <View style={styles.postHeader}>
-          <Image
-            source={{ uri: "https://placekitten.com/50/50" }}
-            style={styles.avatar}
-          />
-
-          <Text style={styles.postComment}>This is a post comment</Text>
-
-          <TouchableOpacity onPress={handleOptionsPress}>
-            <MaterialCommunityIcons
-              name="dots-vertical"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          {showOptions && (
-            <View style={styles.dropdownOptions}>
-              <TouchableOpacity onPress={handleDeletePress}>
-                <Text>Delete</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-
-        <Image
-          source={{ uri: "https://placekitten.com/300/200" }}
-          style={styles.postImage}
-        />
-
-        <View style={styles.postActions}>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="heart-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="comment-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="bookmark-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.postContainer}>
-        <View style={styles.postHeader}>
-          <Image
-            source={{ uri: "https://placekitten.com/50/50" }}
-            style={styles.avatar}
-          />
-
-          <Text style={styles.postComment}>This is a post comment</Text>
-
-          <TouchableOpacity onPress={handleOptionsPress}>
-            <MaterialCommunityIcons
-              name="dots-vertical"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          {showOptions && (
-            <View style={styles.dropdownOptions}>
-              <TouchableOpacity onPress={handleDeletePress}>
-                <Text>Delete</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-
-        <Image
-          source={{ uri: "https://placekitten.com/300/200" }}
-          style={styles.postImage}
-        />
-
-        <View style={styles.postActions}>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="heart-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="comment-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="bookmark-outline"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+          </>
+        ))
+      )}
     </ScrollView>
   );
 };
