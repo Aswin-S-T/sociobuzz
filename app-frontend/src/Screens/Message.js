@@ -1,4 +1,5 @@
 import React from "react";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import {
   View,
   Text,
@@ -8,7 +9,9 @@ import {
   StyleSheet,
 } from "react-native";
 
-const Message = ({ navigation }) => {
+const Tab = createMaterialTopTabNavigator();
+
+const AllMessagesScreen = ({ navigation }) => {
   const users = [
     {
       id: "1",
@@ -55,6 +58,65 @@ const Message = ({ navigation }) => {
         style={styles.userList}
       />
     </View>
+  );
+};
+
+const RequestsScreen = ({ navigation }) => {
+  const requests = [
+    {
+      id: "3",
+      name: "Alice",
+      requestText: "Can you accept my request?",
+      imageUrl: "https://placekitten.com/52/50",
+    },
+    {
+      id: "4",
+      name: "Bob",
+      requestText: "I would like to connect with you.",
+      imageUrl: "https://placekitten.com/53/50",
+    },
+  ];
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.userContainer}
+      onPress={() =>
+        navigation.navigate("Chat", { userId: item.id, userName: item.name })
+      }
+    >
+      <Image source={{ uri: item.imageUrl }} style={styles.profileImage} />
+      <View style={styles.userInfo}>
+        <Text style={styles.userName}>{item.name}</Text>
+        <Text style={styles.lastChat}>{item.requestText}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={requests}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        style={styles.userList}
+      />
+    </View>
+  );
+};
+
+const Message = () => {
+  return (
+    <Tab.Navigator
+      tabBarOptions={{
+        style: {
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+      }}
+    >
+      <Tab.Screen name="All" component={AllMessagesScreen} />
+      <Tab.Screen name="Requests" component={RequestsScreen} />
+    </Tab.Navigator>
   );
 };
 

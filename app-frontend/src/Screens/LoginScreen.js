@@ -16,26 +16,31 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    // Make API call to the Node.js backend
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      setLoading(true);
+      const response = await fetch(
+        "https://crowdly-2.onrender.com/api/v1/user/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: username, password }),
+        }
+      );
 
       const data = await response.json();
 
       if (data.success) {
-        // Navigate to the home page on successful login
         navigation.navigate("Crowdly", { userId: data.userId });
+        setLoading(false);
       } else {
-        setModalMessage(data.message);
+        setModalMessage("Invalid email or password");
         setModalVisible(true);
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -47,41 +52,93 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ backgroundColor: "#ffff", height: "100%", padding: 15 }}>
-      <Image
+    <View style={{ height: "100%" }}>
+      {/* <Image
         source={
           "https://img.freepik.com/free-vector/usability-testing-concept-illustration_114360-2456.jpg"
         }
-        style={{ height: 200 }}
-      />
-
-      <View style={{ marginTop: 40 }}>
-        <Text style={{ color: "#444" }}>Username</Text>
+        style={{ height: 200,width:'100%' }}
+      /> */}
+      <View
+        style={{
+          backgroundColor: "#0E3D8B",
+          height: 240,
+          padding: 15,
+          borderBottomLeftRadius: 60,
+          borderBottomRightRadius: 60,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <View
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              fontSize: 40,
+              fontFamily: "sans-serif",
+              alignItems: "center",
+            }}
+          >
+            Login Here
+          </Text>
+        </View>
+      </View>
+      <View style={{ marginTop: 40, margin: 40 }}>
+        <Text
+          style={{
+            color: "#222",
+            fontWeight: "bold",
+            fontFamily: "sans-serif",
+            marginLeft: 9,
+          }}
+        >
+          Username
+        </Text>
         <TextInput
           style={{
-            marginTop: 20,
-            backgroundColor: "white",
-            border: "1px solid #74DF00",
+            top: 20,
+            position: "relative",
+            background: "transparent",
+            border: "none",
             padding: 10,
             outline: "none",
             borderRadius: 20,
+            borderBottomWidth: 2,
+            borderBottomColor: "#0E3D8B",
           }}
           placeholder="Username"
           value={username}
           onChangeText={(text) => setUsername(text)}
         />
         <View style={{ marginTop: 40 }}>
-          <Text style={{ color: "#444" }}>Password</Text>
+          <Text
+            style={{
+              color: "#222",
+              fontFamily: "sans-serif",
+              fontWeight: "bold",
+              marginLeft: 9,
+            }}
+          >
+            Password
+          </Text>
           <TextInput
             style={{
-              marginTop: 20,
-              borderRadius: 20,
-              backgroundColor: "white",
+              top: 20,
+              position: "relative",
+              background: "transparent",
+              border: "none",
               padding: 10,
-              border: "1px solid #74DF00",
               outline: "none",
+              borderRadius: 20,
               borderBottomWidth: 2,
-              borderBottomColor: "#74DF00",
+              borderBottomColor: "#0E3D8B",
             }}
             placeholder="Password"
             secureTextEntry
@@ -93,12 +150,15 @@ const LoginScreen = ({ navigation }) => {
           <TouchableOpacity
             style={{
               borderRadius: 40,
-              backgroundColor: "#74DF00",
+              backgroundColor: "#0E3D8B",
               color: "#fff",
-              padding: 10,
+              padding: 15,
               border: "none",
               outline: "none",
               marginTop: 10,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
             onPress={handleLogin}
           >
@@ -106,10 +166,14 @@ const LoginScreen = ({ navigation }) => {
               style={{
                 display: "flex",
                 justifyContent: "center",
+                alignContent: "center",
+                alignItems: "center",
+                fontFamily: "sans-serif",
+                fontWeight: "bold",
                 color: "#fff",
               }}
             >
-              Login
+              {loading ? <>Please wait....</> : <>Login</>}
             </Text>
           </TouchableOpacity>
           <AlertModal
@@ -128,18 +192,21 @@ const LoginScreen = ({ navigation }) => {
             <Text style={{ color: "#444", top: -10, position: "relative" }}>
               Foregot password?
             </Text>
-            <Text style={{ color: "#444" }}>OR</Text>
+            <Text style={{ color: "#0E3D8B", fontWeight: "bold" }}>OR</Text>
             <TouchableOpacity
               style={{
                 borderRadius: 40,
-                backgroundColor: "#74DF00",
-                color: "#fff",
+                backgroundColor: "gray",
+                color: "#444",
                 fontFamily: "sans-serif",
                 width: "100%",
                 padding: 10,
                 border: "none",
                 outline: "none",
                 marginTop: 10,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               <Text

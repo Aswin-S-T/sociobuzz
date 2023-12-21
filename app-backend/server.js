@@ -1,33 +1,55 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
-
+const dotenv = require("dotenv");
+const userRouter = require("./routes/userRouter");
+const admin = require("firebase-admin");
+const serviceAccount = require("./config/firebase/serviceAccountKey.json");
 const app = express();
+
+const socket = require("socket.io");
+
 const port = process.env.PORT || 5000;
 
-app.use(bodyParser.json());
+// Middlewares
 app.use(cors());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+dotenv.config();
 
-const users = [
-  { id: 1, username: "user1", password: "password1" },
-  { id: 2, username: "user2", password: "password2" },
-];
+// Database configuration
+const db = require("./config/db");
+db.connect();
 
-app.post("/api/login", (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(
-    (u) => u.username === username && u.password === password
-  );
+// Routes configuration
+app.use("/api/v1/user", userRouter);
 
-  if (user) {
-    res.json({ success: true, userId: user.id });
-  } else {
-    res
-      .status(401)
-      .json({ success: false, message: "Invalid username or password" });
-  }
+app.get("/", (req, res) => {
+  res.send("Nodejs started....");
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+const server = app.listen(port, () => {
+  console.log(`Server is running at the port ${port}`);
 });
+
+// const io = socket(server, {
+// 	cors: {
+// 		origin: "https://aswins-social-media-app.netlify.app/",
+// 		credentials: true,
+// 	},
+// });
+
+// global.onlineUsers = new Map();
+// io.on("connection", (socket) => {
+// 	console.log("CONNECTED================");
+// 	global.chatSocket = socket;
+// 	socket.on("add-user", (userId) => {
+// 		onlineUsers.set(userId, socket.id);
+// 	});
+
+// 	socket.on("send-msg", (data) => {
+// 		const sendUserSocket = onlineUsers.get(data.to);
+// 		if (sendUserSocket) {
+// 			socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+// 		}
+// 	});
+// });
