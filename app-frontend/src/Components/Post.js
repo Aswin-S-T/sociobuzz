@@ -9,10 +9,15 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
+import LikedUsersPopup from "./LikedUsersPopup";
+import CommentsPopup from "./CommentsPopup";
+
 
 const Post = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showLikedUsers, setShowLikedUsers] = useState(false);
+  const [showComments, setShowComments] = useState(false);
 
   const handleOptionsPress = () => {
     setShowOptions(!showOptions);
@@ -20,6 +25,16 @@ const Post = () => {
 
   const handleDeletePress = () => {
     setShowOptions(false);
+  };
+
+  const handleLikedUsersPress = () => {
+    // Fetch liked users data or toggle the liked users popup
+    setShowLikedUsers(!showLikedUsers);
+  };
+
+  const handleCommentsPress = () => {
+    // Fetch comments data or toggle the comments popup
+    setShowComments(!showComments);
   };
 
   const [post, setPost] = useState([]);
@@ -50,64 +65,83 @@ const Post = () => {
         post &&
         post.length > 0 &&
         post.map((p) => (
-          <>
-            <View style={styles.postContainer}>
-              <View style={styles.postHeader}>
-                <Image source={{ uri: p?.image }} style={styles.avatar} />
+          <View key={p._id} style={styles.postContainer}>
+            <View style={styles.postHeader}>
+              <Image source={{ uri: p?.image }} style={styles.avatar} />
+              <Text style={styles.postComment}>{p?.caption}</Text>
+              <TouchableOpacity onPress={handleOptionsPress}>
+                <MaterialCommunityIcons
+                  name="dots-vertical"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+              {showOptions && (
+                <View style={styles.dropdownOptions}>
+                  <TouchableOpacity onPress={handleDeletePress}>
+                    <Text>Delete</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
 
-                <Text style={styles.postComment}>{p?.caption}</Text>
+            <Image
+              source={{ uri: "https://placekitten.com/300/200" }}
+              style={styles.postImage}
+            />
 
-                <TouchableOpacity onPress={handleOptionsPress}>
-                  <MaterialCommunityIcons
-                    name="dots-vertical"
-                    size={24}
-                    color="black"
-                  />
-                </TouchableOpacity>
-                {showOptions && (
-                  <View style={styles.dropdownOptions}>
-                    <TouchableOpacity onPress={handleDeletePress}>
-                      <Text>Delete</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View>
-
-              <Image
-                source={{ uri: "https://placekitten.com/300/200" }}
-                style={styles.postImage}
-              />
-
-              <View style={styles.postActions}>
-                <TouchableOpacity>
+            <View style={styles.postActions}>
+              <TouchableOpacity onPress={handleLikedUsersPress}>
+                <View style={styles.actionContainer}>
                   <MaterialCommunityIcons
                     name="heart-outline"
                     size={24}
                     color="black"
                   />
-                </TouchableOpacity>
-                <TouchableOpacity>
+                  <Text>{p.like.length}</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleCommentsPress}>
+                <View style={styles.actionContainer}>
                   <MaterialCommunityIcons
                     name="comment-outline"
                     size={24}
                     color="black"
                   />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <MaterialCommunityIcons
-                    name="bookmark-outline"
-                    size={24}
-                    color="black"
-                  />
-                </TouchableOpacity>
-              </View>
+                  <Text>{p.comment.length}</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <MaterialCommunityIcons
+                  name="bookmark-outline"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
             </View>
-          </>
+
+           
+            {showLikedUsers && (
+              <LikedUsersPopup
+                likedUsers={p.like}
+                onClose={() => setShowLikedUsers(false)}
+              />
+            )}
+
+           
+            {showComments && (
+              <CommentsPopup
+                comments={p.comment}
+                onClose={() => setShowComments(false)}
+              />
+            )}
+          </View>
         ))
       )}
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   postContainer: {
@@ -157,6 +191,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
+  },
+  actionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 
