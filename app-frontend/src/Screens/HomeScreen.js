@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, TouchableOpacity, PermissionsAndroid } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { createAppContainer } from "react-navigation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -8,6 +8,28 @@ import Profile from "./Profile";
 import Search from "./Search";
 import Message from "./Message";
 import Notification from "./Notification";
+
+const PlusButton = ({ onPress }) => (
+  <TouchableOpacity
+    style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+    onPress={onPress}
+  >
+    <View
+      style={{
+        backgroundColor: "#0E3D8B",
+        borderRadius: 25,
+        width: 50,
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: 10,
+        elevation: 10, // for Android shadow
+      }}
+    >
+      <Ionicons name="add" size={30} color="white" />
+    </View>
+  </TouchableOpacity>
+);
 
 const TabNavigator = createMaterialBottomTabNavigator(
   {
@@ -18,19 +40,6 @@ const TabNavigator = createMaterialBottomTabNavigator(
         tabBarIcon: (tabInfo) => (
           <Ionicons
             name="md-home"
-            size={tabInfo.focused ? 20 : 18}
-            color={"#0E3D8B"}
-          />
-        ),
-      },
-    },
-    Search: {
-      screen: Search,
-      navigationOptions: {
-        tabBarLabel: "",
-        tabBarIcon: (tabInfo) => (
-          <Ionicons
-            name="search"
             size={tabInfo.focused ? 20 : 18}
             color={"#0E3D8B"}
           />
@@ -48,6 +57,13 @@ const TabNavigator = createMaterialBottomTabNavigator(
             color={"#0E3D8B"}
           />
         ),
+      },
+    },
+    Add: {
+      screen: () => null,
+      navigationOptions: {
+        tabBarLabel: "",
+        tabBarIcon: () => <PlusButton onPress={requestCameraPermission} />,
       },
     },
     Notification: {
@@ -83,14 +99,33 @@ const TabNavigator = createMaterialBottomTabNavigator(
   }
 );
 
+const requestCameraPermission = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      {
+        title: "Permission Request",
+        message: "This app needs permission to access your files.",
+        buttonNeutral: "Ask Me Later",
+        buttonNegative: "Cancel",
+        buttonPositive: "OK",
+      }
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log("Permission granted");
+      // Handle the logic for opening the file picker or camera
+    } else {
+      console.log("Permission denied");
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+};
+
 const Navigator = createAppContainer(TabNavigator);
 
 const HomeScreen = () => {
-  return (
-    <Navigator>
-      <Landing />
-    </Navigator>
-  );
+  return <Navigator />;
 };
 
 export default HomeScreen;
