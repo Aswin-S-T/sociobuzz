@@ -84,7 +84,7 @@ const Post = () => {
             </View>
 
             <Image
-              source={{ uri: "https://placekitten.com/300/200" }}
+              source={{ uri: p?.image }}
               style={styles.postImage}
             />
 
