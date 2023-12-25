@@ -52,7 +52,7 @@ const Post = () => {
 
   return (
     <ScrollView>
-      {console.log("Post--------------", post)}
+      {/* {console.log("Post--------------", post)} */}
       {loading ? (
         <Spinner
           visible={loading}
