@@ -7,21 +7,24 @@ import {
   ScrollView,
   Button,
   TextInput,
+  FlatList,
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Post from "../Components/Post";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spinner from "react-native-loading-spinner-overlay";
 import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 import { BACKEND_URL } from "../Constants/Api";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [myPost,setMyPost] = useState([])
+  const [myPost, setMyPost] = useState([]);
   const [image, setImage] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -38,37 +41,33 @@ const Profile = () => {
     }
   };
 
-
   const getBase64Image = async (image) => {
-    
     try {
-      if (image ) {
+      if (image) {
         const base64 = await FileSystem.readAsStringAsync(image, {
           encoding: FileSystem.EncodingType.Base64,
         });
         return base64;
       } else {
-        throw new Error('Image URI is null or undefined');
+        throw new Error("Image URI is null or undefined");
       }
     } catch (error) {
-      console.error('Error converting image to base64:', error);
+      console.error("Error converting image to base64:", error);
       throw error;
     }
   };
-  
 
   const uploadPost = async () => {
     try {
       setLoading(true);
-     
-      
+
       const base64Image = await getBase64Image(image);
-      
+
       const apiUrl = "https://sociobuzz.onrender.com/api/v1/user/add-post";
       //const apiUrl = 'http://192.168.214.245:5000/api/v1/user/add-post'
-      const userId = "637360dbc8559f2ffa05acd5"; 
+      const userId = "637360dbc8559f2ffa05acd5";
       const caption = "Add your caption here";
-      const imageType = "jpg"; 
+      const imageType = "jpg";
       const about = "About your post";
 
       const postData = {
@@ -78,7 +77,7 @@ const Profile = () => {
         imageType,
         about,
       };
-      
+
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -102,40 +101,37 @@ const Profile = () => {
     }
   };
 
-  useEffect(()=>{
-    const fetchPost = async()=>{
-      let uid = '637360dbc8559f2ffa05acd5'
-      let url = `${BACKEND_URL}/api/v1/user/my-post/${uid}`
-     
+  useEffect(() => {
+    const fetchPost = async () => {
+      let uid = "637360dbc8559f2ffa05acd5";
+      let url = `${BACKEND_URL}/api/v1/user/my-post/${uid}`;
+
       const response = await fetch(url);
       const data = await response?.json();
       if (data && data.data) {
-        setMyPost(data?.data)
-      
+        setMyPost(data?.data);
+        setRefreshing(false);
       }
-     
-    }
-    fetchPost()
-  },[])
+    };
+    fetchPost();
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
         const storedData = await AsyncStorage.getItem("userData");
-        
+
         let uid = "637360dbc8559f2ffa05acd5";
         let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
-        
+
         const response = await fetch(url);
         const data = await response?.json();
 
         if (data && data?.data) {
-          
           setProfileData(data?.data);
           setLoading(false);
         }
-       
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -143,6 +139,10 @@ const Profile = () => {
 
     fetchUserData();
   }, []);
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
   return (
     <ScrollView>
       {loading ? (
@@ -368,8 +368,21 @@ const Profile = () => {
             </View>
             <View style={styles.line}></View>
             <View>
-             
-              <Post newpost={myPost} />
+              {myPost?.length > 0 && (
+                <>
+                  <FlatList
+                    data={myPost}
+                    renderItem={({ item }) => <Post newpost={item} />}
+                    keyExtractor={(item) => item._id.toString()}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                      />
+                    }
+                  />
+                </>
+              )}
             </View>
           </View>
         </>
