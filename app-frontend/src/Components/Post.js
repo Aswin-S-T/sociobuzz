@@ -12,7 +12,6 @@ import Spinner from "react-native-loading-spinner-overlay";
 import LikedUsersPopup from "./LikedUsersPopup";
 import CommentsPopup from "./CommentsPopup";
 
-
 const Post = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -83,10 +82,7 @@ const Post = () => {
               )}
             </View>
 
-            <Image
-              source={{ uri: p?.image }}
-              style={styles.postImage}
-            />
+            <Image source={{ uri: p?.image }} style={styles.postImage} />
 
             <View style={styles.postActions}>
               <TouchableOpacity onPress={handleLikedUsersPress}>
@@ -118,7 +114,6 @@ const Post = () => {
               </TouchableOpacity>
             </View>
 
-           
             {showLikedUsers && (
               <LikedUsersPopup
                 likedUsers={p.like}
@@ -126,7 +121,6 @@ const Post = () => {
               />
             )}
 
-           
             {showComments && (
               <CommentsPopup
                 comments={p.comment}
@@ -139,7 +133,6 @@ const Post = () => {
     </ScrollView>
   );
 };
-
 
 const styles = StyleSheet.create({
   postContainer: {

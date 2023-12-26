@@ -5,26 +5,108 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Button,
+  TextInput,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Post from "../Components/Post";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spinner from "react-native-loading-spinner-overlay";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from 'expo-file-system';
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const [image, setImage] = useState(null);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result?.assets[0]?.uri);
+    }
+  };
+
+
+  const getBase64Image = async (image) => {
+    
+    try {
+      if (image ) {
+        const base64 = await FileSystem.readAsStringAsync(image, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        return base64;
+      } else {
+        throw new Error('Image URI is null or undefined');
+      }
+    } catch (error) {
+      console.error('Error converting image to base64:', error);
+      throw error;
+    }
+  };
+  
+
+  const uploadPost = async () => {
+    try {
+      setLoading(true);
+     
+      
+      const base64Image = await getBase64Image(image);
+      
+      const apiUrl = "https://sociobuzz.onrender.com/api/v1/user/add-post";
+      //const apiUrl = 'http://192.168.214.245:5000/api/v1/user/add-post'
+      const userId = "637360dbc8559f2ffa05acd5"; 
+      const caption = "Add your caption here";
+      const imageType = "jpg"; 
+      const about = "About your post";
+
+      const postData = {
+        userId,
+        caption,
+        data: base64Image,
+        imageType,
+        about,
+      };
+      
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
+
+      const responseData = await response.json();
+
+      if (responseData.status === 200) {
+        console.log("Post uploaded successfully!");
+      } else {
+        console.error("Error uploading post:", responseData);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error uploading post:", error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
         const storedData = await AsyncStorage.getItem("userData");
-        console.log(
-          "stored data----------",
-          storedData ? storedData : "no store data"
-        );
+        
         let uid = "637360dbc8559f2ffa05acd5";
         let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
         console.log("URL--------------", url);
@@ -32,20 +114,11 @@ const Profile = () => {
         const data = await response?.json();
 
         if (data && data?.data) {
-          console.log("HERE CALLED#################");
+          
           setProfileData(data?.data);
           setLoading(false);
         }
-        // if (storedData) {
-        //   const response = await fetch(
-        //     `https://crowdly-2.onrender.com/api/v1/user/all-post/${storedData}`
-        //   );
-        //   const data = await response?.json();
-        //   // setProfileData(data?.data)
-        //   // setLoading(false)
-        //   console.log("Data for profile------------>", data?.data);
-        //   setUserData(JSON.parse(storedData));
-        // }
+       
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -80,7 +153,6 @@ const Profile = () => {
                   marginTop: 20,
                 }}
               >
-               
                 <View style={{ left: -60, position: "relative" }}>
                   <View style={styles.bold}>
                     <Text>{profileData?.username}</Text>
@@ -89,23 +161,31 @@ const Profile = () => {
                     <Text>Actess & Musician</Text>
                   </View>
                 </View>
-               
               </View>
             </View>
             <View
               style={{
-                display:'flex',
-                justifyContent:'center',
-                left:-50,
+                display: "flex",
+                justifyContent: "center",
+                left: -50,
                 flexDirection: "row",
-                alignItems:'center',
+                alignItems: "center",
                 position: "relative",
                 margin: 10,
               }}
             >
               <View>
                 <View style={styles.bold}>
-                  <Text style={{fontWeight:'bold',fontFamily:'sans-serif',color:'darkblue',fontSize:20}}>{profileData?.followers?.length}</Text>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontFamily: "sans-serif",
+                      color: "darkblue",
+                      fontSize: 20,
+                    }}
+                  >
+                    {profileData?.followers?.length}
+                  </Text>
                 </View>
                 <View style={styles.semibold}>
                   <Text>Followers</Text>
@@ -113,7 +193,16 @@ const Profile = () => {
               </View>
               <View style={{ left: 50, position: "relative" }}>
                 <View style={styles.bold}>
-                  <Text style={{fontWeight:'bold',fontFamily:'sans-serif',color:'darkblue',fontSize:20}}>{profileData?.following?.length}</Text>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontFamily: "sans-serif",
+                      color: "darkblue",
+                      fontSize: 20,
+                    }}
+                  >
+                    {profileData?.following?.length}
+                  </Text>
                 </View>
                 <View style={styles.semibold}>
                   <Text>Following</Text>
@@ -121,7 +210,16 @@ const Profile = () => {
               </View>
               <View style={{ left: 100, position: "relative" }}>
                 <View style={styles.bold}>
-                  <Text style={{fontWeight:'bold',fontFamily:'sans-serif',color:'darkblue',fontSize:20}}>2</Text>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontFamily: "sans-serif",
+                      color: "darkblue",
+                      fontSize: 20,
+                    }}
+                  >
+                    2
+                  </Text>
                 </View>
                 <View style={styles.semibold}>
                   <Text>Posts</Text>
@@ -187,6 +285,70 @@ const Profile = () => {
                 </TouchableOpacity>
               </View>
             </View>
+            <View style={{ margin: 10 }}>
+              {/* <Button title="Add Post" /> */}
+              <Button title="Add Post" onPress={pickImage} />
+              {image && (
+                <View
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    margin: 10,
+                    top: 10,
+                    position: "relative",
+                  }}
+                >
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: 200, height: 200 }}
+                  />
+                  <TextInput
+                    style={{
+                      top: 20,
+                      position: "relative",
+                      background: "transparent",
+                      border: "none",
+                      padding: 10,
+                      outline: "none",
+                      borderRadius: 20,
+                      borderBottomWidth: 2,
+                      borderBottomColor: "#0E3D8B",
+                    }}
+                    placeholder="Add a caption"
+                  />
+                  <TouchableOpacity
+                    onPress={uploadPost}
+                    style={{
+                      borderRadius: 40,
+                      backgroundColor: "#0E3D8B",
+                      width: "50%",
+                      color: "#fff",
+                      padding: 10,
+                      border: "none",
+                      outline: "none",
+                      marginTop: 20,
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignContent: "center",
+                        alignItems: "center",
+                        fontFamily: "sans-serif",
+                        fontWeight: "bold",
+                        color: "#fff",
+                      }}
+                    >
+                      Upload
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
             <View style={styles.line}></View>
             <View>
               <Post />
@@ -239,8 +401,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    left:40,
-    position:'relative'
+    left: 40,
+    position: "relative",
   },
 });
 
