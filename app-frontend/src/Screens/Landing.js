@@ -35,10 +35,10 @@ const Landing = () => {
       {loading ? (
         <>
           <Spinner
-          visible={loading}
-          textContent={"Loading..."}
-          textStyle={{ color: "#FFF" }}
-        />
+            visible={loading}
+            textContent={"Loading..."}
+            textStyle={{ color: "#FFF" }}
+          />
         </>
       ) : (
         <>

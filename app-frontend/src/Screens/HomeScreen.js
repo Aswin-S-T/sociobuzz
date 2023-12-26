@@ -8,6 +8,10 @@ import Profile from "./Profile";
 import Search from "./Search";
 import Message from "./Message";
 import Notification from "./Notification";
+import { FontAwesome } from "@expo/vector-icons";
+import UsersLIstScreen from "./UsersLIstScreen";
+import { Feather } from '@expo/vector-icons'; 
+
 
 const PlusButton = ({ onPress }) => (
   <TouchableOpacity
@@ -66,16 +70,13 @@ const TabNavigator = createMaterialBottomTabNavigator(
         tabBarIcon: () => <PlusButton onPress={requestCameraPermission} />,
       },
     },
-    Notification: {
-      screen: Notification,
+    Users: {
+      screen: UsersLIstScreen,
       navigationOptions: {
         tabBarLabel: "",
         tabBarIcon: (tabInfo) => (
-          <Ionicons
-            name="notifications"
-            size={tabInfo.focused ? 20 : 18}
-            color={"#0E3D8B"}
-          />
+          <Feather name="users" size={tabInfo.focused ? 26 : 20}
+          color={"#0E3D8B"} />
         ),
       },
     },

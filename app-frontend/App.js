@@ -7,6 +7,8 @@ import LoginScreen from "./src/Screens/LoginScreen";
 import HomeScreen from "./src/Screens/HomeScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import NotificationIconWithBadge from "./src/Components/NotificationIconWithBadge";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -41,7 +43,16 @@ export default function App() {
               fontFamily: "sans-serif",
             },
             headerRight: () => (
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={{
+                  left: -20,
+                  position: "relative",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  display: "flex",
+                  justifyContent: "space-around",
+                }}
+              >
                 {isSearchVisible && (
                   <TextInput
                     style={styles.searchInput}
@@ -58,6 +69,10 @@ export default function App() {
                   style={{ marginRight: 15 }}
                   onPress={toggleSearchVisibility}
                 />
+                <View>
+                  {/* <Ionicons name="notifications" size={20} color={"#0E3D8B"} /> */}
+                  <NotificationIconWithBadge notificationCount={5} />
+                </View>
               </View>
             ),
           })}
