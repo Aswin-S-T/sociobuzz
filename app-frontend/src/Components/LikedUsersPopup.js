@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 
 const formatTimeDifference = (time) => {
@@ -36,6 +37,7 @@ const LikedUsersPopup = ({ likedUsers, onClose }) => {
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Liked Users</Text>
+          <ScrollView>
           <FlatList
             data={likedUsers}
             keyExtractor={(item, index) => index.toString()}
@@ -49,6 +51,7 @@ const LikedUsersPopup = ({ likedUsers, onClose }) => {
             )}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
+          </ScrollView>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
@@ -69,8 +72,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    width: "80%",
+    width: "90%",
     maxHeight: "80%",
+    height:500
   },
   modalTitle: {
     fontSize: 18,
