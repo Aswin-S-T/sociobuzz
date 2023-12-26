@@ -14,12 +14,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spinner from "react-native-loading-spinner-overlay";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from 'expo-file-system';
+import { BACKEND_URL } from "../Constants/Api";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [myPost,setMyPost] = useState([])
   const [image, setImage] = useState(null);
 
   const pickImage = async () => {
@@ -101,6 +102,22 @@ const Profile = () => {
     }
   };
 
+  useEffect(()=>{
+    const fetchPost = async()=>{
+      let uid = '637360dbc8559f2ffa05acd5'
+      let url = `${BACKEND_URL}/api/v1/user/my-post/${uid}`
+     
+      const response = await fetch(url);
+      const data = await response?.json();
+      if (data && data.data) {
+        setMyPost(data?.data)
+      
+      }
+     
+    }
+    fetchPost()
+  },[])
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -109,7 +126,7 @@ const Profile = () => {
         
         let uid = "637360dbc8559f2ffa05acd5";
         let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
-        console.log("URL--------------", url);
+        
         const response = await fetch(url);
         const data = await response?.json();
 
@@ -351,7 +368,8 @@ const Profile = () => {
             </View>
             <View style={styles.line}></View>
             <View>
-              <Post />
+             
+              <Post newpost={myPost} />
             </View>
           </View>
         </>

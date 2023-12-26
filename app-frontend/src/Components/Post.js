@@ -12,7 +12,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import LikedUsersPopup from "./LikedUsersPopup";
 import CommentsPopup from "./CommentsPopup";
 
-const Post = () => {
+const Post = ({newpost}) => {
   const [showOptions, setShowOptions] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showLikedUsers, setShowLikedUsers] = useState(false);
@@ -33,6 +33,7 @@ const Post = () => {
   const handleCommentsPress = () => {
     setShowComments(!showComments);
   };
+  console.log('NEW POST-------------', newpost)
 
   const [post, setPost] = useState([]);
 
@@ -59,9 +60,9 @@ const Post = () => {
           textStyle={{ color: "#FFF" }}
         />
       ) : (
-        post &&
-        post.length > 0 &&
-        post.map((p) => (
+        newpost &&
+        newpost.length > 0 &&
+        newpost.map((p) => (
           <View key={p._id} style={styles.postContainer}>
             <View style={styles.postHeader}>
               <Image source={{ uri: p?.image }} style={styles.avatar} />
