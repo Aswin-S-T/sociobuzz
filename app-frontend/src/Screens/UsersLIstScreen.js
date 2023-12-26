@@ -1,8 +1,10 @@
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
 import Spinner from "react-native-loading-spinner-overlay";
+import { useNavigation } from '@react-navigation/native';
 
 const UsersListScreen = () => {
+  const navigation = useNavigation();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -19,6 +21,11 @@ const UsersListScreen = () => {
     fetchUser();
   }, []);
 
+  const navigateToUserProfile = (userId) => {
+    console.log('heloo aswins&&&&&&&&&&')
+    navigation.navigate('UserProfile', { userId });
+  };
+
   return (
     <View style={styles.container}>
       {loading ? (
@@ -32,8 +39,8 @@ const UsersListScreen = () => {
           {users && users?.length > 0 ? (
             <View style={styles.userList}>
               {users.map((user, index) => (
-                <View key={index} style={styles.cardContainer}>
-                  <View style={styles.card}>
+                <TouchableOpacity key={index} style={styles.cardContainer} onPress={() => navigateToUserProfile(user?._id)}>
+                  <View style={styles.card} >
                     <Image
                       style={styles.tinyLogo}
                       source={{
@@ -45,7 +52,7 @@ const UsersListScreen = () => {
                       <Text style={{color:"white",fontFamily:'sans-serif'}}>Send request</Text>
                     </TouchableOpacity>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           ) : (

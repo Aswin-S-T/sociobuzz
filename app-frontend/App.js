@@ -9,6 +9,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import NotificationIconWithBadge from "./src/Components/NotificationIconWithBadge";
+import UserProfile from "./src/Screens/UserProfile";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -84,6 +85,26 @@ export default function App() {
             headerTitle: "Login   Here",
             headerStyle: {
               backgroundColor: "#0E3D8B",
+              shadowColor: "rgba(0, 0, 0, 0.1)",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.8,
+              shadowRadius: 20,
+              elevation: 5,
+            },
+            headerTitleStyle: {
+              color: "#0E3D8B",
+              fontWeight: "bold",
+              fontFamily: "sans-serif",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="UserProfile"
+          component={UserProfile}
+          options={{
+            headerTitle: "Profile",
+            headerStyle: {
+              backgroundColor: "#fff",
               shadowColor: "rgba(0, 0, 0, 0.1)",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.8,
