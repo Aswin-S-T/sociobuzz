@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import AlertModal from "../Components/AlertModal";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
@@ -22,7 +23,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const response = await fetch(
-        "https://crowdly-2.onrender.com/api/v1/user/login",
+        "https://sociobuzz.onrender.com/api/v1/user/login",
         {
           method: "POST",
           headers: {
@@ -35,6 +36,8 @@ const LoginScreen = ({ navigation }) => {
       const data = await response.json();
 
       if (data.success) {
+        console.log('Your data after login  : ', data?.data?._id)
+        await AsyncStorage.setItem('userData', JSON.stringify(data?.data?._id));
         navigation.navigate("Crowdly", { userId: data.userId });
         setLoading(false);
       } else {
