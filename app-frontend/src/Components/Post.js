@@ -12,7 +12,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import LikedUsersPopup from "./LikedUsersPopup";
 import CommentsPopup from "./CommentsPopup";
 
-const Post = () => {
+const Post = ({ newpost }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showLikedUsers, setShowLikedUsers] = useState(false);
@@ -51,7 +51,6 @@ const Post = () => {
 
   return (
     <ScrollView>
-      {/* {console.log("Post--------------", post)} */}
       {loading ? (
         <Spinner
           visible={loading}
@@ -59,13 +58,11 @@ const Post = () => {
           textStyle={{ color: "#FFF" }}
         />
       ) : (
-        post &&
-        post.length > 0 &&
-        post.map((p) => (
-          <View key={p._id} style={styles.postContainer}>
+        newpost && (
+          <View key={newpost._id} style={styles.postContainer}>
             <View style={styles.postHeader}>
-              <Image source={{ uri: p?.image }} style={styles.avatar} />
-              <Text style={styles.postComment}>{p?.caption}</Text>
+              <Image source={{ uri: newpost?.image }} style={styles.avatar} />
+              <Text style={styles.postComment}>{newpost?.caption}</Text>
               <TouchableOpacity onPress={handleOptionsPress}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
@@ -82,7 +79,7 @@ const Post = () => {
               )}
             </View>
 
-            <Image source={{ uri: p?.image }} style={styles.postImage} />
+            <Image source={{ uri: newpost?.image }} style={styles.postImage} />
 
             <View style={styles.postActions}>
               <TouchableOpacity onPress={handleLikedUsersPress}>
@@ -92,7 +89,7 @@ const Post = () => {
                     size={24}
                     color="black"
                   />
-                  <Text>{p.like.length}</Text>
+                  <Text>{newpost.like.length}</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleCommentsPress}>
@@ -102,7 +99,7 @@ const Post = () => {
                     size={24}
                     color="black"
                   />
-                  <Text>{p.comment.length}</Text>
+                  <Text>{newpost.comment.length}</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity>
@@ -116,19 +113,19 @@ const Post = () => {
 
             {showLikedUsers && (
               <LikedUsersPopup
-                likedUsers={p.like}
+                likedUsers={newpost.like}
                 onClose={() => setShowLikedUsers(false)}
               />
             )}
 
             {showComments && (
               <CommentsPopup
-                comments={p.comment}
+                comments={newpost.comment}
                 onClose={() => setShowComments(false)}
               />
             )}
           </View>
-        ))
+        )
       )}
     </ScrollView>
   );
