@@ -99,9 +99,19 @@ userRouter.get("/all-users", async (req, res) => {
 });
 
 userRouter.get("/all-post", async (req, res) => {
-  allPost().then((response) => {
-    res.send(response);
-  });
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 4;
+
+  try {
+    const result = await allPost(page, pageSize);
+    res.send(result);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+
+  // allPost().then((response) => {
+  //   res.send(response);
+  // });
 });
 
 userRouter.post("/all", async (req, res) => {
