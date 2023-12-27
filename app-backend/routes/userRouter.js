@@ -54,7 +54,7 @@ userRouter.post("/add-post", async (req, res) => {
     const uploadResponse = await cloudinary.uploader
       .upload(fileStr, {
         upload_preset: "cloudinary_react",
-        public_id: `post_${Date.now()}`,
+        public_id: `post_${Date.now().toString(36)}`,
       })
       .then(async (response) => {
         console.log(
