@@ -14,8 +14,10 @@ import CommentsPopup from "./CommentsPopup";
 import { BACKEND_URL } from "../Constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EnlargedImageModal from "./EnlargedImageModal";
+import { useNavigation } from "@react-navigation/native";
 
 const Post = ({ newpost }) => {
+  const navigation = useNavigation();
   const [showOptions, setShowOptions] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showLikedUsers, setShowLikedUsers] = useState(false);
@@ -73,6 +75,10 @@ const Post = ({ newpost }) => {
     const data = await response?.json();
   };
 
+  const navigateToUserProfile = (userId) => {
+    navigation.navigate("UserProfile", { userId });
+  };
+
   return (
     <ScrollView>
       {loading ? (
@@ -85,7 +91,11 @@ const Post = ({ newpost }) => {
         newpost && (
           <View key={newpost._id} style={styles.postContainer}>
             <View style={styles.postHeader}>
-              <Image source={{ uri: newpost?.image }} style={styles.avatar} />
+              <TouchableOpacity
+                onPress={() => navigateToUserProfile(newpost?.userId)}
+              >
+                <Image source={{ uri: newpost?.image }} style={styles.avatar} />
+              </TouchableOpacity>
               <Text style={styles.postComment}>{newpost?.caption}</Text>
               <TouchableOpacity onPress={handleOptionsPress}>
                 <MaterialCommunityIcons
