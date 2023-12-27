@@ -16,6 +16,8 @@ import { BACKEND_URL } from "../Constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EnlargedImageModal from "./EnlargedImageModal";
 import { useNavigation } from "@react-navigation/native";
+import { Entypo } from '@expo/vector-icons'; 
+
 
 const Post = ({ newpost }) => {
   const navigation = useNavigation();
@@ -165,7 +167,14 @@ const Post = ({ newpost }) => {
               {showOptions && (
                 <View style={styles.dropdownOptions}>
                   <TouchableOpacity onPress={handleDeletePress}>
-                    <Text>Delete</Text>
+                    <Text>
+                    <Entypo name="block" size={20} color="black" /> Not Interested
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleDeletePress}>
+                    <Text>
+                    <Entypo name="block" size={20} color="black" /> Not Interested
+                    </Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -289,6 +298,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 3,
     elevation: 5,
+    zIndex:1000
   },
   postImage: {
     width: "100%",
