@@ -14,9 +14,11 @@ import { useRoute } from "@react-navigation/native";
 import { BACKEND_URL } from "../Constants/Api";
 import Spinner from "react-native-loading-spinner-overlay";
 import Post from "../Components/Post";
+import { useNavigation } from "@react-navigation/native";
 
 const UserProfile = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const { userId } = route.params;
   const [userData, setUserData] = useState(null);
   const [profileData, setProfileData] = useState(null);
@@ -89,6 +91,10 @@ const UserProfile = () => {
     );
 
     const data = await response.json();
+  };
+
+  const chat = () => {
+    navigation.navigate("Chat", { userId });
   };
 
   return (
@@ -224,12 +230,13 @@ const UserProfile = () => {
                       position: "relative",
                     }}
                   >
-                    {sent ? <>Request sent</> : (<>Follow</>)}
+                    {sent ? <>Request sent</> : <>Follow</>}
                   </Text>
                 </TouchableOpacity>
               </View>
               <View>
                 <TouchableOpacity
+                  onPress={chat}
                   style={{
                     padding: 7,
                     backgroundColor: "lightgray",
