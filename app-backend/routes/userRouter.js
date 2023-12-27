@@ -55,22 +55,23 @@ userRouter.post("/add-post", async (req, res) => {
         public_id: Date.now(),
       })
       .then(async (response) => {
-        let postData = {
-          userId: req.body.userId,
-          caption: req.body.caption,
-          image: response.url,
-          imageType: req.body.imageType,
-          about: req.body.about,
-          time: new Date(),
-        };
+        console.log('Response---------------', response ? response : 'no response')
+        // let postData = {
+        //   userId: req.body.userId,
+        //   caption: req.body.caption,
+        //   image: response.url,
+        //   imageType: req.body.imageType,
+        //   about: req.body.about,
+        //   time: new Date(),
+        // };
 
-        await Post.create(postData).then((response) => {
-          if (response) {
-            let resp = {};
-            resp.status = 200;
-            res.send(resp);
-          }
-        });
+        // await Post.create(postData).then((response) => {
+        //   if (response) {
+        //     let resp = {};
+        //     resp.status = 200;
+        //     res.send(resp);
+        //   }
+        // });
       });
   } catch (err) {
     console.error("Error ", err);
