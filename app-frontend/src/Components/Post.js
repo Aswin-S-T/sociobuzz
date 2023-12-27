@@ -13,6 +13,7 @@ import LikedUsersPopup from "./LikedUsersPopup";
 import CommentsPopup from "./CommentsPopup";
 import { BACKEND_URL } from "../Constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import EnlargedImageModal from "./EnlargedImageModal";
 
 const Post = ({ newpost }) => {
   const [showOptions, setShowOptions] = useState(false);
@@ -38,6 +39,7 @@ const Post = ({ newpost }) => {
   };
 
   const [post, setPost] = useState([]);
+  const [showEnlargedImage, setShowEnlargedImage] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -69,7 +71,6 @@ const Post = ({ newpost }) => {
       body: JSON.stringify(likeData),
     });
     const data = await response?.json();
-    console.log("response after like---------------", data ? data : "no data");
   };
 
   return (
@@ -101,8 +102,19 @@ const Post = ({ newpost }) => {
                 </View>
               )}
             </View>
-
-            <Image source={{ uri: newpost?.image }} style={styles.postImage} />
+            <TouchableOpacity onPress={() => setShowEnlargedImage(true)}>
+              <Image
+                source={{ uri: newpost?.image }}
+                style={styles.postImage}
+              />
+            </TouchableOpacity>
+            {showEnlargedImage && (
+              <EnlargedImageModal
+                visible={showEnlargedImage}
+                imageUrl={newpost?.image}
+                onClose={() => setShowEnlargedImage(false)}
+              />
+            )}
 
             <View style={styles.postActions}>
               <TouchableOpacity>

@@ -99,9 +99,7 @@ userRouter.get("/all-users", async (req, res) => {
 });
 
 userRouter.get("/all-post", async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  allPost(page,limit).then((response) => {
+  allPost().then((response) => {
     res.send(response);
   });
 });
