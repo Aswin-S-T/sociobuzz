@@ -48,42 +48,33 @@ userRouter.post("/add-post", async (req, res) => {
   // let userData = req.user;
   let response = {};
   try {
-    // console.log('TEST------------', req.file)
     const fileStr = req.body.data;
-    // console.log('FILE STR--------------', fileStr)
-    console.log('File length:', fileStr.length);
-    console.log('File data:', fileStr.substring(0, 50)); 
-    const base64Data = fileStr.replace(/^data:image\/\w+;base64,/, '');
     const uploadResponse = await cloudinary.uploader
-      .upload(base64Data, {
+      .upload(fileStr, {
         upload_preset: "cloudinary_react",
-        public_id: `post_${Date.now().toString(36)}`,
+        public_id: Date.now(),
       })
       .then(async (response) => {
-        console.log(
-          "Response---------------",
-          response ? response : "no response"
-        );
-        // let postData = {
-        //   userId: req.body.userId,
-        //   caption: req.body.caption,
-        //   image: response.url,
-        //   imageType: req.body.imageType,
-        //   about: req.body.about,
-        //   time: new Date(),
-        // };
+        let postData = {
+          userId: req.body.userId,
+          caption: req.body.caption,
+          image: response.url,
+          imageType: req.body.imageType,
+          about: req.body.about,
+          time: new Date(),
+        };
 
-        // await Post.create(postData).then((response) => {
-        //   if (response) {
-        //     let resp = {};
-        //     resp.status = 200;
-        //     res.send(resp);
-        //   }
-        // });
+        await Post.create(postData).then((response) => {
+          if (response) {
+            let resp = {};
+            resp.status = 200;
+            res.send(resp);
+          }
+        });
       });
   } catch (err) {
     console.error("Error ", err);
-    res.status(500).json({ err });
+    res.status(500).json({ err: "Something went wrong" });
   }
 });
 
