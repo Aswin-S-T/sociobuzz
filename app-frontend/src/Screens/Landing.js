@@ -3,11 +3,15 @@ import { View, FlatList, RefreshControl } from "react-native";
 import Post from "../Components/Post";
 import Story from "../Components/Story";
 import Spinner from "react-native-loading-spinner-overlay";
+import { StyleSheet, Button } from "react-native";
+import { Video, ResizeMode } from "expo-av";
 
 const Landing = () => {
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const video = React.useRef(null);
+  const [status, setStatus] = React.useState({});
 
   useEffect(() => {
     fetchData();
@@ -42,6 +46,28 @@ const Landing = () => {
         </>
       ) : (
         <>
+          {/* <Video
+            ref={video}
+            // style={styles.video}
+            style={{width:400,height:400}}
+            source={{
+              uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+            }}
+            useNativeControls
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping
+            onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+          />
+          <View>
+            <Button
+              title={status.isPlaying ? "Pause" : "Play"}
+              onPress={() =>
+                status.isPlaying
+                  ? video.current.pauseAsync()
+                  : video.current.playAsync()
+              }
+            />
+          </View> */}
           <FlatList
             data={posts}
             renderItem={({ item }) => <Post newpost={item} />}
