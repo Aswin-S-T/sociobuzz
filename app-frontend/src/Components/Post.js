@@ -172,6 +172,7 @@ const Post = ({ newpost }) => {
 
             {showComments && (
               <CommentsPopup
+                postId={newpost?._id}
                 comments={newpost.comment}
                 onClose={() => setShowComments(false)}
               />

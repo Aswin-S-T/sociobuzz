@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   View,
@@ -8,9 +8,14 @@ import {
   StyleSheet,
   ScrollView,
   TextInput,
+  ToastAndroid,
 } from "react-native";
+import { BACKEND_URL } from "../Constants/Api";
 
-const CommentsPopup = ({ comments, onClose }) => {
+const CommentsPopup = ({ postId, comments, onClose }) => {
+  const [comment, setComment] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const formatTimeDifference = (time) => {
     const currentTime = new Date();
     const likedTime = new Date(time);
@@ -32,7 +37,37 @@ const CommentsPopup = ({ comments, onClose }) => {
       return `${months} ${months === 1 ? "month" : "months"} ago`;
     }
   };
-  console.log("COmments------------", comments);
+
+  const showToastWithGravity = () => {
+    ToastAndroid.showWithGravity(
+      "Your comment added",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  };
+
+  const addComment = async () => {
+    setLoading(true);
+    const response = await fetch(
+      `${BACKEND_URL}/api/v1/user/add-comment/${postId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ comment }),
+      }
+    );
+
+    const data = await response.json();
+    if (data && data.status == 200) {
+      setLoading(false);
+      showToastWithGravity();
+      setComment("");
+      onClose();
+    }
+  };
+
   return (
     <Modal transparent={true} animationType="slide" visible={true}>
       <View style={styles.modalContainer}>
@@ -74,13 +109,21 @@ const CommentsPopup = ({ comments, onClose }) => {
               ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
           </ScrollView>
-          <View style={{display:'flex',justifyContent:'space-around',flexDirection:'row'}}>
+          <View
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+              flexDirection: "row",
+            }}
+          >
             <TextInput
+              value={comment}
+              onChangeText={(text) => setComment(text)}
               style={{
                 top: 20,
                 position: "relative",
                 background: "transparent",
-                width:'100%',
+                width: "100%",
                 border: "none",
                 padding: 10,
                 outline: "none",
@@ -90,9 +133,25 @@ const CommentsPopup = ({ comments, onClose }) => {
               }}
               placeholder="Write a comment...."
             />
-            <TouchableOpacity style={{top:30,position:'relative',width:50,height:40,backgroundColor:'lightgrey',borderRadius:8,color:"#111",display:'flex',justifyContent:'center',alignItems:'cemter'}}>
+            <TouchableOpacity
+              onPress={addComment}
+              style={{
+                top: 30,
+                position: "relative",
+                width: 50,
+                height: 40,
+                backgroundColor: "lightgrey",
+                borderRadius: 8,
+                color: "#111",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "cemter",
+              }}
+            >
               <View>
-                <Text style={{left:5,position:'relative'}}>Post</Text>
+                <Text style={{ left: 5, position: "relative" }}>
+                  {loading ? <>Please wait...</> : <>Post</>}
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -131,6 +190,8 @@ const styles = StyleSheet.create({
   },
   timeAgo: {
     color: "#777",
+    top: 34,
+    position: "relative",
   },
   separator: {
     height: 5,
