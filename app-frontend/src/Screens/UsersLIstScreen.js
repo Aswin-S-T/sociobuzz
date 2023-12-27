@@ -1,12 +1,21 @@
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
 const UsersListScreen = () => {
   const navigation = useNavigation();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [uid, setUid] = useState("637360dbc8559f2ffa05acd5");
+  const [requestSentMap, setRequestSentMap] = useState({});
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -22,8 +31,27 @@ const UsersListScreen = () => {
   }, []);
 
   const navigateToUserProfile = (userId) => {
-    console.log('heloo aswins&&&&&&&&&&')
-    navigation.navigate('UserProfile', { userId });
+    navigation.navigate("UserProfile", { userId });
+  };
+
+  const sendRequest = async (toId) => {
+    let followData = { toId, fromId: uid };
+    setRequestSentMap((prevMap) => ({
+      ...prevMap,
+      [toId]: true,
+    }));
+    const response = await fetch(
+      "https://sociobuzz.onrender.com/api/v1/user/follow",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(followData),
+      }
+    );
+
+    const data = await response.json();
   };
 
   return (
@@ -39,8 +67,12 @@ const UsersListScreen = () => {
           {users && users?.length > 0 ? (
             <View style={styles.userList}>
               {users.map((user, index) => (
-                <TouchableOpacity key={index} style={styles.cardContainer} onPress={() => navigateToUserProfile(user?._id)}>
-                  <View style={styles.card} >
+                <TouchableOpacity
+                  key={index}
+                  style={styles.cardContainer}
+                  onPress={() => navigateToUserProfile(user?._id)}
+                >
+                  <View style={styles.card}>
                     <Image
                       style={styles.tinyLogo}
                       source={{
@@ -48,8 +80,28 @@ const UsersListScreen = () => {
                       }}
                     />
                     <Text style={styles.text}>{user?.username}</Text>
-                    <TouchableOpacity style={styles.button}>
-                      <Text style={{color:"white",fontFamily:'sans-serif'}}>Send request</Text>
+                    <TouchableOpacity
+                      style={[
+                        styles.button,
+                        {
+                          backgroundColor: requestSentMap[user?._id]
+                            ? "green"
+                            : "#0E3D8B",
+                        },
+                      ]}
+                      onPress={() => sendRequest(user?._id)}
+                      disabled={requestSentMap[user?._id]}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          fontFamily: "sans-serif",
+                        }}
+                      >
+                        {requestSentMap[user?._id]
+                          ? "Request Sent"
+                          : "Send Request"}
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </TouchableOpacity>
@@ -69,19 +121,19 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
   },
-  button:{
-    display:'flex',
-    justifyContent:'center',
-    alignItems:'center',
-    width:100,
-    height:30,
-    backgroundColor:'#0E3D8B',
-    color:"white",
-    fontFamily:'sans-serif',
-    borderRadius:20,
-    left:20,
-    top:10,
-    position:'relative'
+  button: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 100,
+    height: 30,
+    backgroundColor: "#0E3D8B",
+    color: "white",
+    fontFamily: "sans-serif",
+    borderRadius: 20,
+    left: 20,
+    top: 10,
+    position: "relative",
   },
   userList: {
     flexDirection: "row",
@@ -93,7 +145,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   card: {
-    display:'flex',
+    display: "flex",
     flex: 1,
     backgroundColor: "white",
     padding: 15,
@@ -109,15 +161,15 @@ const styles = StyleSheet.create({
     left: 40,
     position: "relative",
   },
-  text:{
-    fontFamily:'sans-serif',
-    fontWeight:'bold',
-    display:'flex',
-    justifyContent:'center',
-    alignItems:'center',
-    left:50,
-    position:'relative'
-  }
+  text: {
+    fontFamily: "sans-serif",
+    fontWeight: "bold",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    left: 50,
+    position: "relative",
+  },
 });
 
 export default UsersListScreen;

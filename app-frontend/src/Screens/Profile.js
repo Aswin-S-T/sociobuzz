@@ -172,7 +172,7 @@ const Profile = () => {
               >
                 <View style={{ left: -60, position: "relative" }}>
                   <View style={styles.bold}>
-                    <Text>{profileData?.username}</Text>
+                    <Text style={{fontWeight:'bold',fontSize:18,fontFamily:'sans-serif'}}>{profileData?.username}</Text>
                   </View>
                   <View style={styles.semibold}>
                     <Text>Actess & Musician</Text>
@@ -244,64 +244,7 @@ const Profile = () => {
               </View>
             </View>
 
-            <View
-              style={{
-                margin: 10,
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <View>
-                <TouchableOpacity
-                  style={{
-                    padding: 7,
-                    backgroundColor: "#74DF00",
-                    color: "#fff",
-                    minWidth: 100,
-                    borderRadius: 24,
-                    left: -5,
-                    position: "relative",
-                  }}
-                >
-                  <Text
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      color: "#fff",
-                      fontFamily: "sans-serif",
-                    }}
-                  >
-                    Follow
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View>
-                <TouchableOpacity
-                  style={{
-                    padding: 7,
-                    backgroundColor: "lightgray",
-                    color: "#111",
-                    minWidth: 100,
-                    borderRadius: 24,
-                    left: 5,
-                    position: "relative",
-                  }}
-                >
-                  <Text
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      color: "#111",
-                      fontFamily: "sans-serif",
-                    }}
-                  >
-                    Message
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            
             <View style={{ margin: 10 }}>
               {/* <Button title="Add Post" /> */}
               <Button title="Add Post" onPress={pickImage} />
