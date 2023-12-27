@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const userRouter = require("./routes/userRouter");
 const admin = require("firebase-admin");
 const serviceAccount = require("./config/firebase/serviceAccountKey.json");
+const fileupload = require("express-fileupload");
 const app = express();
 
 const socket = require("socket.io");
@@ -14,6 +15,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(fileupload({ useTempFiles: true }));
 dotenv.config();
 
 // Database configuration

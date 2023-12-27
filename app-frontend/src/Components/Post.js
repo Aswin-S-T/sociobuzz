@@ -11,12 +11,16 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
 import LikedUsersPopup from "./LikedUsersPopup";
 import CommentsPopup from "./CommentsPopup";
+import { BACKEND_URL } from "../Constants/Api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import EnlargedImageModal from "./EnlargedImageModal";
 
 const Post = ({ newpost }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showLikedUsers, setShowLikedUsers] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [uid, setUid] = useState("637360dbc8559f2ffa05acd5");
 
   const handleOptionsPress = () => {
     setShowOptions(!showOptions);
@@ -35,10 +39,13 @@ const Post = ({ newpost }) => {
   };
 
   const [post, setPost] = useState([]);
+  const [showEnlargedImage, setShowEnlargedImage] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
+      const storedData = await AsyncStorage.getItem("userData");
+
       const response = await fetch(
         "https://crowdly-2.onrender.com/api/v1/user/all-post"
       );
@@ -48,6 +55,23 @@ const Post = ({ newpost }) => {
     };
     fetchData();
   }, []);
+
+  const likePost = async (postId) => {
+    const url = `${BACKEND_URL}/api/v1/user/like-post/${postId}`;
+    let likeData = {
+      userId: uid,
+      username: "test",
+      time: new Date(),
+    };
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(likeData),
+    });
+    const data = await response?.json();
+  };
 
   return (
     <ScrollView>
@@ -78,11 +102,22 @@ const Post = ({ newpost }) => {
                 </View>
               )}
             </View>
-
-            <Image source={{ uri: newpost?.image }} style={styles.postImage} />
+            <TouchableOpacity onPress={() => setShowEnlargedImage(true)}>
+              <Image
+                source={{ uri: newpost?.image }}
+                style={styles.postImage}
+              />
+            </TouchableOpacity>
+            {showEnlargedImage && (
+              <EnlargedImageModal
+                visible={showEnlargedImage}
+                imageUrl={newpost?.image}
+                onClose={() => setShowEnlargedImage(false)}
+              />
+            )}
 
             <View style={styles.postActions}>
-              <TouchableOpacity onPress={handleLikedUsersPress}>
+              <TouchableOpacity>
                 <View style={styles.actionContainer}>
                   <MaterialCommunityIcons
                     name="heart-outline"
@@ -110,6 +145,13 @@ const Post = ({ newpost }) => {
                 />
               </TouchableOpacity>
             </View>
+            <TouchableOpacity onPress={handleLikedUsersPress}>
+              <View style={{ margin: 10 }}>
+                <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
+                  Liked by {newpost?.like?.length} peoples
+                </Text>
+              </View>
+            </TouchableOpacity>
 
             {showLikedUsers && (
               <LikedUsersPopup
