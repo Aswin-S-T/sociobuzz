@@ -48,6 +48,7 @@ userRouter.post("/add-post", async (req, res) => {
   // let userData = req.user;
   let response = {};
   try {
+    console.log('TEST------------', req.file)
     const fileStr = req.body.data;
     console.log('FILE STR--------------', fileStr)
     const uploadResponse = await cloudinary.uploader
