@@ -51,8 +51,11 @@ userRouter.post("/add-post", async (req, res) => {
     // console.log('TEST------------', req.file)
     const fileStr = req.body.data;
     // console.log('FILE STR--------------', fileStr)
+    console.log('File length:', fileStr.length);
+    console.log('File data:', fileStr.substring(0, 50)); 
+    const base64Data = fileStr.replace(/^data:image\/\w+;base64,/, '');
     const uploadResponse = await cloudinary.uploader
-      .upload(fileStr, {
+      .upload(base64Data, {
         upload_preset: "cloudinary_react",
         public_id: `post_${Date.now().toString(36)}`,
       })
