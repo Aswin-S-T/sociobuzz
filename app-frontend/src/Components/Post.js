@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -135,12 +136,15 @@ const Post = ({ newpost }) => {
                 </View>
               )}
             </View>
-            <TouchableOpacity onPress={() => setShowEnlargedImage(true)}>
+            <TouchableWithoutFeedback
+              onPress={() => setShowEnlargedImage(true)}
+            >
               <Image
+                onPress={() => setShowEnlargedImage(true)}
                 source={{ uri: newpost?.image }}
                 style={styles.postImage}
               />
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
             {showEnlargedImage && (
               <EnlargedImageModal
                 visible={showEnlargedImage}
