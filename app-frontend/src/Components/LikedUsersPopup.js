@@ -31,7 +31,7 @@ const formatTimeDifference = (time) => {
   }
 };
 
-const LikedUsersPopup = ({ likedUsers, onClose }) => {
+const LikedUsersPopup = ({ postId,likedUsers, onClose }) => {
   return (
     <Modal transparent={true} animationType="slide" visible={true}>
       <View style={styles.modalContainer}>
