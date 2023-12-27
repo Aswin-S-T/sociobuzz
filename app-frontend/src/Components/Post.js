@@ -27,6 +27,28 @@ const Post = ({ newpost }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(newpost?.like?.length);
 
+  const formatTimeDifference = (time) => {
+    const currentTime = new Date();
+    const likedTime = new Date(time);
+    const differenceInSeconds = Math.floor((currentTime - likedTime) / 1000);
+
+    if (differenceInSeconds < 60) {
+      return `${differenceInSeconds} seconds ago`;
+    } else if (differenceInSeconds < 3600) {
+      const minutes = Math.floor(differenceInSeconds / 60);
+      return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+    } else if (differenceInSeconds < 86400) {
+      const hours = Math.floor(differenceInSeconds / 3600);
+      return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+    } else if (differenceInSeconds < 2592000) {
+      const days = Math.floor(differenceInSeconds / 86400);
+      return `${days} ${days === 1 ? "day" : "days"} ago`;
+    } else {
+      const months = Math.floor(differenceInSeconds / 2592000);
+      return `${months} ${months === 1 ? "month" : "months"} ago`;
+    }
+  };
+
   useEffect(() => {
     const userLikedPost = newpost.like.some((like) => like.userId === uid);
     setIsLiked(userLikedPost);
@@ -121,6 +143,17 @@ const Post = ({ newpost }) => {
                 <Image source={{ uri: newpost?.image }} style={styles.avatar} />
               </TouchableOpacity>
               <Text style={styles.postComment}>{newpost?.caption}</Text>
+              <Text
+                style={{
+                  color: "#555",
+                  left: -20,
+                  position: "relative",
+                  fontFamily: "sans-serif",
+                  fontSize: 13,
+                }}
+              >
+                {formatTimeDifference(newpost?.time)}
+              </Text>
               <TouchableOpacity onPress={handleOptionsPress}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
@@ -128,6 +161,7 @@ const Post = ({ newpost }) => {
                   color="black"
                 />
               </TouchableOpacity>
+
               {showOptions && (
                 <View style={styles.dropdownOptions}>
                   <TouchableOpacity onPress={handleDeletePress}>
