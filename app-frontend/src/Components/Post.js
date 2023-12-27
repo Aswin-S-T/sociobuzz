@@ -23,6 +23,13 @@ const Post = ({ newpost }) => {
   const [showLikedUsers, setShowLikedUsers] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [uid, setUid] = useState("637360dbc8559f2ffa05acd5");
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(newpost?.like?.length);
+
+  useEffect(() => {
+    const userLikedPost = newpost.like.some((like) => like.userId === uid);
+    setIsLiked(userLikedPost);
+  }, [newpost.like, uid]);
 
   const handleOptionsPress = () => {
     setShowOptions(!showOptions);
@@ -59,12 +66,20 @@ const Post = ({ newpost }) => {
   }, []);
 
   const likePost = async (postId) => {
+    console.log("Like button clicked :)");
     const url = `${BACKEND_URL}/api/v1/user/like-post/${postId}`;
-    let likeData = {
-      userId: uid,
-      username: "test",
-      time: new Date(),
-    };
+    let likeData = {};
+    const storedData = await AsyncStorage.getItem("userData");
+    if (storedData) {
+      likeData = { ...storedData };
+    } else {
+      likeData = {
+        userId: uid,
+        username: "test",
+        time: new Date(),
+      };
+    }
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -72,7 +87,15 @@ const Post = ({ newpost }) => {
       },
       body: JSON.stringify(likeData),
     });
-    const data = await response?.json();
+    if (response.ok) {
+      setIsLiked(!isLiked);
+
+      const updatedPostResponse = await fetch(
+        `https://crowdly-2.onrender.com/api/v1/user/all-post/${postId}`
+      );
+      const updatedPostData = await updatedPostResponse.json();
+      setLikeCount(updatedPostData?.data.like.length);
+    }
   };
 
   const navigateToUserProfile = (userId) => {
@@ -129,12 +152,16 @@ const Post = ({ newpost }) => {
             <View style={styles.postActions}>
               <TouchableOpacity>
                 <View style={styles.actionContainer}>
-                  <MaterialCommunityIcons
-                    name="heart-outline"
-                    size={24}
-                    color="black"
-                  />
-                  <Text>{newpost.like.length}</Text>
+                  <TouchableOpacity onPress={() => likePost(newpost?._id)}>
+                    <View style={styles.actionContainer}>
+                      <MaterialCommunityIcons
+                        name={isLiked ? "heart" : "heart-outline"}
+                        size={24}
+                        color={isLiked ? "red" : "black"}
+                      />
+                      <Text>{likeCount}</Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleCommentsPress}>
@@ -165,6 +192,7 @@ const Post = ({ newpost }) => {
 
             {showLikedUsers && (
               <LikedUsersPopup
+                postId={newpost?._id}
                 likedUsers={newpost.like}
                 onClose={() => setShowLikedUsers(false)}
               />
@@ -172,6 +200,7 @@ const Post = ({ newpost }) => {
 
             {showComments && (
               <CommentsPopup
+                postId={newpost?._id}
                 comments={newpost.comment}
                 onClose={() => setShowComments(false)}
               />
