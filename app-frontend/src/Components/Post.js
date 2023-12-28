@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableWithoutFeedback,
+  ToastAndroid
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -16,8 +17,7 @@ import { BACKEND_URL } from "../Constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EnlargedImageModal from "./EnlargedImageModal";
 import { useNavigation } from "@react-navigation/native";
-import { Entypo } from '@expo/vector-icons'; 
-
+import { Entypo } from "@expo/vector-icons";
 
 const Post = ({ newpost }) => {
   const navigation = useNavigation();
@@ -28,6 +28,9 @@ const Post = ({ newpost }) => {
   const [uid, setUid] = useState("637360dbc8559f2ffa05acd5");
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(newpost?.like?.length);
+  const [isSaved, setIsSaved] = useState(false);
+  const [profileData, setProfileData] = useState(null);
+  const [savedList, setSavedList] = useState([]);
 
   const formatTimeDifference = (time) => {
     const currentTime = new Date();
@@ -50,6 +53,32 @@ const Post = ({ newpost }) => {
       return `${months} ${months === 1 ? "month" : "months"} ago`;
     }
   };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        const storedData = await AsyncStorage.getItem("userData");
+
+        let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
+
+        const response = await fetch(url);
+        const data = await response?.json();
+
+        if (data && data?.data) {
+          let saved_data = data?.data?.saved_post;
+          setSavedList(saved_data);
+
+          setProfileData(data?.data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const userLikedPost = newpost.like.some((like) => like.userId === uid);
@@ -84,7 +113,16 @@ const Post = ({ newpost }) => {
         "https://crowdly-2.onrender.com/api/v1/user/all-post"
       );
       const data = await response?.json();
-      setPost(data?.data);
+
+      const currentSavedList = savedList || [];
+      if (currentSavedList.length > 0) {
+        const modifiedData = data?.data.map((post) => ({
+          ...post,
+          saved: savedList.includes(post._id),
+        }));
+
+        setPost(modifiedData);
+      }
       setLoading(false);
     };
     fetchData();
@@ -125,6 +163,38 @@ const Post = ({ newpost }) => {
 
   const navigateToUserProfile = (userId) => {
     navigation.navigate("UserProfile", { userId });
+  };
+
+  const showToastWithGravity = () => {
+    ToastAndroid.showWithGravity(
+      "Post saved",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  };
+
+  const savePost = async (postId) => {
+    const url = `${BACKEND_URL}/api/v1/user/save-post/${postId}`;
+    let saveData = {};
+    const storedData = await AsyncStorage.getItem("userData");
+    if (storedData) {
+      saveData = { ...storedData };
+    } else {
+      saveData = {
+        userId: uid,
+      };
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(saveData),
+    });
+    if (response && response.ok){
+      showToastWithGravity()
+    }
   };
 
   return (
@@ -168,12 +238,14 @@ const Post = ({ newpost }) => {
                 <View style={styles.dropdownOptions}>
                   <TouchableOpacity onPress={handleDeletePress}>
                     <Text>
-                    <Entypo name="block" size={20} color="black" /> Not Interested
+                      <Entypo name="block" size={20} color="black" /> Not
+                      Interested
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={handleDeletePress}>
                     <Text>
-                    <Entypo name="block" size={20} color="black" /> Not Interested
+                      <Entypo name="block" size={20} color="black" /> Not
+                      Interested
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -221,11 +293,13 @@ const Post = ({ newpost }) => {
                   <Text>{newpost.comment.length}</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+
+              <TouchableOpacity onPress={() => savePost(newpost?._id)}>
                 <MaterialCommunityIcons
                   name="bookmark-outline"
                   size={24}
                   color="black"
+                  backgroundColor={newpost?.saved ? "black" : "white"}
                 />
               </TouchableOpacity>
             </View>
@@ -298,7 +372,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 3,
     elevation: 5,
-    zIndex:1000
+    zIndex: 1000,
   },
   postImage: {
     width: "100%",
