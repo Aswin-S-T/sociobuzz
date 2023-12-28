@@ -388,4 +388,13 @@ module.exports = {
         });
     });
   },
+  getChatUsers: (userId) => {
+    return new Promise((resolve, reject) => {
+      User.findOne({ _id: userId }, { chat_users: 1 }).then((result) => {
+        if (result) {
+          resolve(result?.chat_users);
+        }
+      });
+    });
+  },
 };
