@@ -15,6 +15,7 @@ const {
   updateUser,
   unFollow,
   getStory,
+  savePost,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -240,6 +241,12 @@ userRouter.post("/unfollow", async (req, res) => {
 
 userRouter.get("/get-story", async (req, res) => {
   getStory().then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.post("/save-post/:postId", async (req, res) => {
+  savePost(req.params.postId, req.body.userId).then((response) => {
     res.send(response);
   });
 });
