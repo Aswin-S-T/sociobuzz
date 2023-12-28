@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema(
     notifications: [],
     bio: { type: String },
     saved_post: [],
+    chat_users: [],
   },
   {
     timestamps: true,

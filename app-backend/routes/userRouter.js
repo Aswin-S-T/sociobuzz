@@ -18,6 +18,7 @@ const {
   savePost,
   searchUser,
   getFollowers,
+  getChatUsers,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -261,6 +262,12 @@ userRouter.get("/search-chat", async (req, res) => {
 
 userRouter.get("/followers", async (req, res) => {
   getFollowers(req.query.userid, req.query.name).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.get("/chat-users/:userId", async (req, res) => {
+  getChatUsers(req.params.userId).then((response) => {
     res.send(response);
   });
 });
