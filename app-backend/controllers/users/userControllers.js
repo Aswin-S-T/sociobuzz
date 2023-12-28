@@ -397,4 +397,34 @@ module.exports = {
       });
     });
   },
+  addChatUser: (userId, data) => {
+    return new Promise((resolve, reject) => {
+      User.findOne({ _id: userId }, { chat_users: 1 }).then(async (user) => {
+        if (user) {
+          if (user?.chat_users) {
+            await User.updateOne(
+              { _id: userId },
+              { $push: { chat_users: data } }
+            ).then((result) => {
+              if (result) {
+                successResponse.data = result;
+                resolve(successResponse);
+              } else {
+                resolve(errorResponse);
+              }
+            });
+          } else {
+            let new_chat = [];
+            new_chat.push(data);
+            await User.updateOne(
+              { _id: userId },
+              { $set: { chat_users: data } }
+            ).then((result) => {
+              resolve(result);
+            });
+          }
+        }
+      });
+    });
+  },
 };

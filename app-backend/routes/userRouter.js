@@ -19,6 +19,7 @@ const {
   searchUser,
   getFollowers,
   getChatUsers,
+  addChatUser,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -268,6 +269,12 @@ userRouter.get("/followers", async (req, res) => {
 
 userRouter.get("/chat-users/:userId", async (req, res) => {
   getChatUsers(req.params.userId).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.post("/add-chat-user/:userId", async (req, res) => {
+  addChatUser(req.params.userId, req.body).then((response) => {
     res.send(response);
   });
 });
