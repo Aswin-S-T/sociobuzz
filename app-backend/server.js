@@ -33,12 +33,12 @@ const server = app.listen(port, () => {
   console.log(`Server is running at the port ${port}`);
 });
 
-// const io = socket(server, {
-// 	cors: {
-// 		origin: "https://aswins-social-media-app.netlify.app/",
-// 		credentials: true,
-// 	},
-// });
+const io = socket(server, {
+  cors: {
+    origin: "https://aswins-social-media-app.netlify.app/",
+    credentials: true,
+  },
+});
 
 // global.onlineUsers = new Map();
 // io.on("connection", (socket) => {
@@ -55,3 +55,12 @@ const server = app.listen(port, () => {
 // 		}
 // 	});
 // });
+
+io.on("connection", (socket) => {
+  console.log(`⚡: ${socket.id} user just connected!`);
+
+  socket.on("disconnect", () => {
+    socket.disconnect();
+    console.log("🔥: A user disconnected");
+  });
+});
