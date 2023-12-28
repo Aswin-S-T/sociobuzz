@@ -336,4 +336,56 @@ module.exports = {
       });
     });
   },
+  searchUser: (userId, key) => {
+    return new Promise((resolve, reject) => {
+      User.findOne({ _id: userId }, { following: 1 })
+        .then((followers) => {
+          const followingArr =
+            followers?.following?.map((item) => ({
+              _id: item._id,
+              username: item.username,
+              profileImage: item.profileImage,
+            })) || [];
+
+          let matchingUsers = followingArr;
+          if (key) {
+            matchingUsers = followingArr.filter((user) =>
+              user.username.toLowerCase().startsWith(key.toLowerCase())
+            );
+          }
+
+          resolve(matchingUsers);
+        })
+        .catch((error) => {
+          console.error("Error fetching followers:", error);
+          reject(error);
+        });
+    });
+  },
+  getFollowers: (userId, key) => {
+    return new Promise((resolve, reject) => {
+      User.findOne({ _id: userId }, { followers: 1 })
+        .then((followers) => {
+          const followerArr =
+            followers?.followers?.map((item) => ({
+              _id: item._id,
+              username: item.username,
+              profileImage: item.profileImage,
+            })) || [];
+
+          let matchingUsers = followerArr;
+          if (key) {
+            matchingUsers = followerArr.filter((user) =>
+              user.username.toLowerCase().startsWith(key.toLowerCase())
+            );
+          }
+
+          resolve(matchingUsers);
+        })
+        .catch((error) => {
+          console.error("Error fetching followers:", error);
+          reject(error);
+        });
+    });
+  },
 };
