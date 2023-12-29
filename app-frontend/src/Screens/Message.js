@@ -14,66 +14,54 @@ import { styles } from "../Utils/styles";
 import Modal from "../Components/Modal";
 import { BACKEND_URL } from "../Constants/Api";
 import socket from "../Utils/socket";
+import { EvilIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AllMessagesScreen = ({ navigation }) => {
   const [visible, setVisible] = useState(false);
-  // const rooms = [
-  //   {
-  //     id: "1",
-  //     name: "Novu Hangouts",
-  //     messages: [
-  //       {
-  //         id: "1a",
-  //         text: "Hello guys, welcome!",
-  //         time: "07:50",
-  //         user: "Tomer",
-  //       },
-  //       {
-  //         id: "1b",
-  //         text: "Hi Tomer, thank you! 😇",
-  //         time: "08:50",
-  //         user: "David",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: "2",
-  //     name: "Hacksquad Team 1",
-  //     messages: [
-  //       {
-  //         id: "2a",
-  //         text: "Guys, who's awake? 🙏🏽",
-  //         time: "12:50",
-  //         user: "Team Leader",
-  //       },
-  //       {
-  //         id: "2b",
-  //         text: "What's up? 🧑🏻‍💻",
-  //         time: "03:50",
-  //         user: "Victoria",
-  //       },
-  //     ],
-  //   },
-  // ];
+  const [uid, setUid] = useState("637360dbc8559f2ffa05acd5");
 
   const [rooms, setRooms] = useState([]);
 
-  //👇🏻 Runs when the component mounts
   useLayoutEffect(() => {
-    function fetchGroups() {
-      fetch(`${BACKEND_URL}/api`)
+    const fetchGroups = async () => {
+      const storedData = await AsyncStorage.getItem("userData");
+      if (storedData) {
+        setUid(storedData);
+      }
+
+      fetch(`${BACKEND_URL}/api/v1/user/chat-users/${uid}`)
         .then((res) => res.json())
-        .then((data) => setRooms(data))
+        .then((data) => {
+          if (data) {
+            setRooms(data);
+          }
+        })
         .catch((err) => console.error(err));
-    }
+    };
     fetchGroups();
   }, []);
 
-  //👇🏻 Runs whenever there is new trigger from the backend
   useEffect(() => {
-    socket.on("roomsList", (rooms) => {
-      setRooms(rooms);
-    });
+    // socket.on("roomsList", (rooms) => {
+    //   setRooms(rooms);
+    // });
+    const fetchGroups = async () => {
+      const storedData = await AsyncStorage.getItem("userData");
+      if (storedData) {
+        setUid(storedData);
+      }
+
+      fetch(`${BACKEND_URL}/api/v1/user/chat-users/${uid}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            setRooms(data);
+          }
+        })
+        .catch((err) => console.error(err));
+    };
+    fetchGroups();
   }, [socket]);
 
   const renderItem = ({ item }) => (
@@ -102,13 +90,14 @@ const AllMessagesScreen = ({ navigation }) => {
         <View style={styles.chatheader}>
           <Text style={styles.chatheading}>Messages</Text>
           <Pressable onPress={() => setVisible(true)}>
-            <Feather name="edit" size={24} color="#0E3D8B" />
+            {/* <Feather name="edit" size={24} color="#0E3D8B" /> */}
+            <EvilIcons name="search" size={24} color="#0E3D8B" />
           </Pressable>
         </View>
       </View>
-
+      {console.log("ROOMS===========>", rooms ? rooms : "no rooms")}
       <View style={styles.chatlistContainer}>
-        {rooms.length > 0 ? (
+        {rooms?.length > 0 ? (
           <FlatList
             data={rooms}
             renderItem={({ item }) => <ChatComponent item={item} />}
