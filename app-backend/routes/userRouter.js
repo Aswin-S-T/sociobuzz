@@ -28,10 +28,6 @@ const User = require("../models/users/userSchema");
 const { cloudinary } = require("../utils/cloudinary.js");
 const userRouter = express.Router();
 
-const multer = require('multer');
-const storage = multer.memoryStorage(); // Store the file in memory
-const upload = multer({ storage: storage });
-
 userRouter.get("/", (req, res) => {
   res.send("user router called");
 });
@@ -53,31 +49,34 @@ userRouter.post("/login", async (req, res) => {
   });
 });
 
-userRouter.post("/add-post",upload.single('data'), async (req, res) => {
+userRouter.post("/add-post", async (req, res) => {
   // let userData = req.user;
   let response = {};
   try {
-    const fileBuffer = req.file.buffer;
+    const fileStr = req.body.data;
     const uploadResponse = await cloudinary.uploader
-      .upload(fileBuffer.toString('base64'), {
+      .upload(fileStr, {
         upload_preset: "cloudinary_react",
         public_id: Date.now(),
+      })
+      .then(async (response) => {
+        let postData = {
+          userId: req.body.userId,
+          caption: req.body.caption,
+          image: response.url,
+          imageType: req.body.imageType,
+          about: req.body.about,
+          time: new Date(),
+        };
+
+        await Post.create(postData).then((response) => {
+          if (response) {
+            let resp = {};
+            resp.status = 200;
+            res.send(resp);
+          }
+        });
       });
-
-    const postData = {
-      userId: req.body.userId,
-      caption: req.body.caption,
-      image: uploadResponse.url,
-      imageType: req.body.imageType,
-      about: req.body.about,
-      time: new Date(),
-    };
-
-    await Post.create(postData);
-
-    let resp = {};
-    resp.status = 200;
-    res.send(resp);
   } catch (err) {
     console.error("Error ", err);
     res.status(500).json({ err: "Something went wrong" });
