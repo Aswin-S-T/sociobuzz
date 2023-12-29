@@ -126,18 +126,30 @@ module.exports = {
       });
     });
   },
-  getMyPost: (userId) => {
+  getMyPost: (userId, page, pageSize) => {
     return new Promise(async (resolve, reject) => {
-      await Post.find({ userId })
-        .sort({ time: -1 })
-        .then((result) => {
-          if (result) {
-            successResponse.data = result;
-            resolve(successResponse);
-          } else {
-            resolve(errorResponse);
-          }
+      try {
+        const result = await Post.find(
+          { userId },
+          { imageType: 0, createdAt: 0, updatedAt: 0, __v: 0 }
+        )
+          .sort({ time: -1 })
+          .skip((page - 1) * pageSize)
+          .limit(pageSize);
+
+        const postsWithLikeCount = result.map((post) => {
+          const likeCount = post.like.length;
+          const commentCount = post.comment.length;
+
+          return { ...post._doc, like: likeCount, comment: commentCount };
         });
+
+        successResponse.data = postsWithLikeCount;
+        resolve(successResponse);
+      } catch (error) {
+        console.error(error);
+        reject(error);
+      }
     });
   },
   getAllPost: () => {
