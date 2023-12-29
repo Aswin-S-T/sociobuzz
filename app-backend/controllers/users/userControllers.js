@@ -137,14 +137,8 @@ module.exports = {
           .skip((page - 1) * pageSize)
           .limit(pageSize);
 
-        const postsWithLikeCount = result.map((post) => {
-          const likeCount = post.like.length;
-          const commentCount = post.comment.length;
-
-          return { ...post._doc, like: likeCount, comment: commentCount };
-        });
-
-        successResponse.data = postsWithLikeCount;
+       
+        successResponse.data = result;
         resolve(successResponse);
       } catch (error) {
         console.error(error);
