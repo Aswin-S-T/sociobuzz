@@ -84,10 +84,8 @@ userRouter.post("/add-post", async (req, res) => {
 });
 
 userRouter.get("/my-post/:id", async (req, res) => {
-  const userId = req.params.id;
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = 4;
-  getMyPost(userId, page, pageSize).then((response) => {
+  let userId = req.params.id;
+  getMyPost(userId).then((response) => {
     res.send(response);
   });
 });

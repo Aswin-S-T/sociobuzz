@@ -126,24 +126,18 @@ module.exports = {
       });
     });
   },
-  getMyPost: (userId, page, pageSize) => {
+  getMyPost: (userId) => {
     return new Promise(async (resolve, reject) => {
-      try {
-        const result = await Post.find(
-          { userId },
-          { imageType: 0, createdAt: 0, updatedAt: 0, __v: 0 }
-        )
-          .sort({ time: -1 })
-          .skip((page - 1) * pageSize)
-          .limit(pageSize);
-
-       
-        successResponse.data = result;
-        resolve(successResponse);
-      } catch (error) {
-        console.error(error);
-        reject(error);
-      }
+      await Post.find({ userId })
+        .sort({ time: -1 })
+        .then((result) => {
+          if (result) {
+            successResponse.data = result;
+            resolve(successResponse);
+          } else {
+            resolve(errorResponse);
+          }
+        });
     });
   },
   getAllPost: () => {
