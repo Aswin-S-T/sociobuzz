@@ -99,14 +99,16 @@ module.exports = {
   },
   getAllUsers: () => {
     return new Promise(async (resolve, reject) => {
-      await User.find().then((result) => {
-        if (result) {
-          successResponse.data = result;
-          resolve(successResponse);
-        } else {
-          resolve(errorResponse);
-        }
-      });
+      await User.find()
+        .select({ username: 1, profileImage: 1, _id: 1 })
+        .then((result) => {
+          if (result) {
+            successResponse.data = result;
+            resolve(successResponse);
+          } else {
+            resolve(errorResponse);
+          }
+        });
     });
   },
   sendFollowRequest: (data) => {
