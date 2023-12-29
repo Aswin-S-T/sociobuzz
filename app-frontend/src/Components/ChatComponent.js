@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Image } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -8,12 +8,12 @@ const ChatComponent = ({ item }) => {
   const navigation = useNavigation();
   const [messages, setMessages] = useState({});
 
-  //👇🏻 Retrieves the last message in the array from the item prop
   useLayoutEffect(() => {
-    setMessages(item.messages[item.messages.length - 1]);
+    if (item && item.messages) {
+      setMessages(item?.messages[item.messages.length - 1]);
+    }
   }, []);
 
-  ///👇🏻 Navigates to the Messaging screen
   const handleNavigation = () => {
     navigation.navigate("Messaging", {
       id: item.id,
@@ -23,27 +23,33 @@ const ChatComponent = ({ item }) => {
 
   return (
     <Pressable style={styles.cchat} onPress={handleNavigation}>
-      <Ionicons
-        name="person-circle-outline"
-        size={45}
-        color="black"
-        style={styles.cavatar}
-      />
+      {item.profileImage ? (
+        <Image source={{ uri: item.profileImage }} style={styles.cavatar} />
+      ) : (
+        <Ionicons
+          name="person-circle-outline"
+          size={45}
+          color="black"
+          style={styles.cavatar}
+        />
+      )}
 
-      <View style={styles.crightContainer}>
-        <View>
-          <Text style={styles.cusername}>{item.name}</Text>
+      {item && (
+        <View style={styles.crightContainer}>
+          <View>
+            <Text style={styles.cusername}>{item.username}</Text>
 
-          <Text style={styles.cmessage}>
-            {messages?.text ? messages.text : "Tap to start chatting"}
-          </Text>
+            <Text style={styles.cmessage}>
+              {messages?.text ? messages.text : "Tap to start chatting"}
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.ctime}>
+              {messages?.time ? messages.time : "now"}
+            </Text>
+          </View>
         </View>
-        <View>
-          <Text style={styles.ctime}>
-            {messages?.time ? messages.time : "now"}
-          </Text>
-        </View>
-      </View>
+      )}
     </Pressable>
   );
 };
