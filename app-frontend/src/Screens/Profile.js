@@ -18,6 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { BACKEND_URL } from "../Constants/Api";
 import UploadScreen from "../Components/UploadScreen";
+import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -26,6 +27,8 @@ const Profile = () => {
   const [myPost, setMyPost] = useState([]);
   const [image, setImage] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const navigation = useNavigation();
+  const [uid,setUid] = useState('')
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -105,6 +108,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchPost = async () => {
       let uid = "637360dbc8559f2ffa05acd5";
+      setUid(uid)
       let url = `${BACKEND_URL}/api/v1/user/my-post/${uid}`;
 
       const response = await fetch(url);
@@ -117,33 +121,43 @@ const Profile = () => {
     fetchPost();
   }, []);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(true);
-        const storedData = await AsyncStorage.getItem("userData");
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const storedData = await AsyncStorage.getItem("userData");
 
-        let uid = "637360dbc8559f2ffa05acd5";
-        let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
+      let uid = "637360dbc8559f2ffa05acd5";
+      let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
 
-        const response = await fetch(url);
-        const data = await response?.json();
+      const response = await fetch(url);
+      const data = await response?.json();
 
-        if (data && data?.data) {
-          setProfileData(data?.data);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+      if (data && data?.data) {
+        setProfileData(data?.data);
+        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    
 
     fetchUserData();
   }, []);
   const onRefresh = () => {
     setRefreshing(true);
-    fetchData();
+    fetchUserData();
   };
+
+  const handleNavigation = () => {
+    navigation.navigate("Upload", {
+      id: uid,
+     
+    });
+  };
+
   return (
 
     <FlatList
@@ -252,8 +266,8 @@ const Profile = () => {
               
               <View style={{ margin: 10 }}>
                 {/* <Button title="Add Post" /> */}
-                {/* <Button title="Add Post" onPress={pickImage} /> */}
-                <UploadScreen />
+                <Button title="Add Post" onPress={handleNavigation} />
+                {/* <UploadScreen /> */}
                 {image && (
                   <View
                     style={{
