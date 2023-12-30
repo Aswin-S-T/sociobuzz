@@ -53,30 +53,46 @@ userRouter.post("/add-post", async (req, res) => {
   // let userData = req.user;
   let response = {};
   try {
-    const fileStr = req.body.data;
-    const uploadResponse = await cloudinary.uploader
-      .upload(fileStr, {
-        upload_preset: "cloudinary_react",
-        public_id: Date.now(),
-      })
-      .then(async (response) => {
-        let postData = {
-          userId: req.body.userId,
-          caption: req.body.caption,
-          image: response.url,
-          imageType: req.body.imageType,
-          about: req.body.about,
-          time: new Date(),
-        };
+    let postData = {
+      userId: req.body.userId,
+      caption: req.body.caption,
+      image: req.body.image,
+      imageType: req.body.imageType,
+      about: req.body.about,
+      time: new Date(),
+    };
 
-        await Post.create(postData).then((response) => {
-          if (response) {
-            let resp = {};
-            resp.status = 200;
-            res.send(resp);
-          }
-        });
-      });
+    await Post.create(postData).then((response) => {
+      if (response) {
+        let resp = {};
+        resp.status = 200;
+        res.send(resp);
+      }
+    });
+    // const fileStr = req.body.data;
+    // const uploadResponse = await cloudinary.uploader
+    //   .upload(fileStr, {
+    //     upload_preset: "cloudinary_react",
+    //     public_id: Date.now(),
+    //   })
+    //   .then(async (response) => {
+    //     let postData = {
+    //       userId: req.body.userId,
+    //       caption: req.body.caption,
+    //       image: response.url,
+    //       imageType: req.body.imageType,
+    //       about: req.body.about,
+    //       time: new Date(),
+    //     };
+
+    //     await Post.create(postData).then((response) => {
+    //       if (response) {
+    //         let resp = {};
+    //         resp.status = 200;
+    //         res.send(resp);
+    //       }
+    //     });
+    //   });
   } catch (err) {
     console.error("Error ", err);
     res.status(500).json({ err: "Something went wrong" });
