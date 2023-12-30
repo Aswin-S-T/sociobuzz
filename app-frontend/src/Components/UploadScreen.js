@@ -1,84 +1,83 @@
-// UploadScreen.js
-
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, Text, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { storage } from '../config';
+import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
+import { StyleSheet, Text, View, Button, Image, ActivityIndicator} from 'react-native';
+import * as ImagePicker from "expo-image-picker"
+import { firebase } from '../Config/firebase';
 
 const UploadScreen = () => {
-  const [image, setImage] = useState(null);
-  const [uploading, setUploading] = useState(false);
+  const [image, setImage] = useState(null)
+  const [uploading, setUploading] = useState(false)
 
   const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4,3],
-      quality: 1
+      aspect: [4, 3],
+      quality: 1,
     });
-    const source = { uri: result.assets[0].uri };
-    console.log(source);
-    setImage(source);
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
   };
 
   const uploadImage = async () => {
-    setUploading(true);
-
-    const response = await fetch(image.uri);
-    const blob = await response.blob();
-    const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
-
-    console.log('file name: ', filename);
-    console.log('BLOB---------', blob);
-    console.log('storage222222222222', storage)
-    var ref = storage.ref(`/images/${filename}`)//.child(filename);  // Use ref method directly
-
-    try {
-      await ref.put(blob);
-    } catch (e) {
-      console.log('Error ============', e);
-    }
-
-    setUploading(false);
-    Alert.alert('Photo uploaded!');
-    setImage(null);
-  };
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function() {
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', image, true);
+      xhr.send(null);
+    })
+    const ref = firebase.storage().ref().child(`Pictures/Image1`)
+    const snapshot = ref.put(blob)
+    snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
+      ()=>{
+        setUploading(true)
+      },
+      (error) => {
+        setUploading(false)
+        console.log(error)
+        blob.close()
+        return 
+      },
+      () => {
+        snapshot.snapshot.ref.getDownloadURL().then((url) => {
+          setUploading(false)
+          console.log("Download URL: ", url)
+          setImage(url)
+          blob.close()
+          return url
+        })
+      }
+      )
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.selectButton} onPress={pickImage}>
-        <Text style={styles.btnText}>Pick an Image</Text>
-      </TouchableOpacity>
-      <View style={styles.imageContainer}>
-        {image && <Image source={{ uri: image.uri }} style={{ width: 300, height: 300 }} />}
-        <TouchableOpacity style={styles.uploadButton} onPress={uploadImage}>
-          <Text style={styles.btnText}>Upload Image</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
-};
-
+    <View>
+       <View style={styles.container}>
+      {image && <Image source={{uri: image}} style={{width: 170 , height: 200}}/>}
+      <Button title='Select Image' onPress={pickImage} />
+      {!uploading ? <Button title='Upload Image' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
+    </View>
+  
+    </View>
+  )
+}
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  selectButton: {
-    backgroundColor: "red",
-    width: 100,
-    height: 40
-  },
-  btnText: {
-    color: 'blue'
-  },
-  imageContainer: {
-    padding: 10
-  },
-  uploadButton: {
-    backgroundColor: "red",
-    width: 100,
-    height: 40
-  }
 });
-
-export default UploadScreen;
+export default UploadScreen
