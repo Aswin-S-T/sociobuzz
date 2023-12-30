@@ -11,6 +11,8 @@ import { Ionicons } from "@expo/vector-icons";
 import NotificationIconWithBadge from "./src/Components/NotificationIconWithBadge";
 import UserProfile from "./src/Screens/UserProfile";
 import ChatScreen from "./src/Screens/ChatScreen";
+import Messaging from "./src/Screens/Messaging";
+import UploadScreen from "./src/Components/UploadScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -124,6 +126,46 @@ export default function App() {
           component={ChatScreen}
           options={{
             headerTitle: "Chat",
+            headerStyle: {
+              backgroundColor: "#fff",
+              shadowColor: "rgba(0, 0, 0, 0.1)",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.8,
+              shadowRadius: 20,
+              elevation: 5,
+            },
+            headerTitleStyle: {
+              color: "#0E3D8B",
+              fontWeight: "bold",
+              fontFamily: "sans-serif",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Messaging"
+          component={Messaging}
+          options={{
+            headerTitle: "Chat",
+            headerStyle: {
+              backgroundColor: "#fff",
+              shadowColor: "rgba(0, 0, 0, 0.1)",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.8,
+              shadowRadius: 20,
+              elevation: 5,
+            },
+            headerTitleStyle: {
+              color: "#0E3D8B",
+              fontWeight: "bold",
+              fontFamily: "sans-serif",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Upload"
+          component={UploadScreen}
+          options={{
+            headerTitle: "Upload post",
             headerStyle: {
               backgroundColor: "#fff",
               shadowColor: "rgba(0, 0, 0, 0.1)",

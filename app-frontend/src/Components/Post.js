@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  TouchableWithoutFeedback,
+  ToastAndroid
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -15,6 +17,7 @@ import { BACKEND_URL } from "../Constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EnlargedImageModal from "./EnlargedImageModal";
 import { useNavigation } from "@react-navigation/native";
+import { Entypo } from "@expo/vector-icons";
 
 const Post = ({ newpost }) => {
   const navigation = useNavigation();
@@ -25,6 +28,57 @@ const Post = ({ newpost }) => {
   const [uid, setUid] = useState("637360dbc8559f2ffa05acd5");
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(newpost?.like?.length);
+  const [isSaved, setIsSaved] = useState(false);
+  const [profileData, setProfileData] = useState(null);
+  const [savedList, setSavedList] = useState([]);
+
+  const formatTimeDifference = (time) => {
+    const currentTime = new Date();
+    const likedTime = new Date(time);
+    const differenceInSeconds = Math.floor((currentTime - likedTime) / 1000);
+
+    if (differenceInSeconds < 60) {
+      return `${differenceInSeconds} seconds ago`;
+    } else if (differenceInSeconds < 3600) {
+      const minutes = Math.floor(differenceInSeconds / 60);
+      return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+    } else if (differenceInSeconds < 86400) {
+      const hours = Math.floor(differenceInSeconds / 3600);
+      return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+    } else if (differenceInSeconds < 2592000) {
+      const days = Math.floor(differenceInSeconds / 86400);
+      return `${days} ${days === 1 ? "day" : "days"} ago`;
+    } else {
+      const months = Math.floor(differenceInSeconds / 2592000);
+      return `${months} ${months === 1 ? "month" : "months"} ago`;
+    }
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        const storedData = await AsyncStorage.getItem("userData");
+
+        let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
+
+        const response = await fetch(url);
+        const data = await response?.json();
+
+        if (data && data?.data) {
+          let saved_data = data?.data?.saved_post;
+          setSavedList(saved_data);
+
+          setProfileData(data?.data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const userLikedPost = newpost.like.some((like) => like.userId === uid);
@@ -59,7 +113,16 @@ const Post = ({ newpost }) => {
         "https://crowdly-2.onrender.com/api/v1/user/all-post"
       );
       const data = await response?.json();
-      setPost(data?.data);
+
+      const currentSavedList = savedList || [];
+      if (currentSavedList.length > 0) {
+        const modifiedData = data?.data.map((post) => ({
+          ...post,
+          saved: savedList.includes(post._id),
+        }));
+
+        setPost(modifiedData);
+      }
       setLoading(false);
     };
     fetchData();
@@ -102,6 +165,38 @@ const Post = ({ newpost }) => {
     navigation.navigate("UserProfile", { userId });
   };
 
+  const showToastWithGravity = () => {
+    ToastAndroid.showWithGravity(
+      "Post saved",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  };
+
+  const savePost = async (postId) => {
+    const url = `${BACKEND_URL}/api/v1/user/save-post/${postId}`;
+    let saveData = {};
+    const storedData = await AsyncStorage.getItem("userData");
+    if (storedData) {
+      saveData = { ...storedData };
+    } else {
+      saveData = {
+        userId: uid,
+      };
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(saveData),
+    });
+    if (response && response.ok){
+      showToastWithGravity()
+    }
+  };
+
   return (
     <ScrollView>
       {loading ? (
@@ -120,6 +215,17 @@ const Post = ({ newpost }) => {
                 <Image source={{ uri: newpost?.image }} style={styles.avatar} />
               </TouchableOpacity>
               <Text style={styles.postComment}>{newpost?.caption}</Text>
+              <Text
+                style={{
+                  color: "#555",
+                  left: -20,
+                  position: "relative",
+                  fontFamily: "sans-serif",
+                  fontSize: 13,
+                }}
+              >
+                {formatTimeDifference(newpost?.time)}
+              </Text>
               <TouchableOpacity onPress={handleOptionsPress}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
@@ -127,20 +233,33 @@ const Post = ({ newpost }) => {
                   color="black"
                 />
               </TouchableOpacity>
+
               {showOptions && (
                 <View style={styles.dropdownOptions}>
                   <TouchableOpacity onPress={handleDeletePress}>
-                    <Text>Delete</Text>
+                    <Text>
+                      <Entypo name="block" size={20} color="black" /> Not
+                      Interested
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleDeletePress}>
+                    <Text>
+                      <Entypo name="block" size={20} color="black" /> Not
+                      Interested
+                    </Text>
                   </TouchableOpacity>
                 </View>
               )}
             </View>
-            <TouchableOpacity onPress={() => setShowEnlargedImage(true)}>
+            <TouchableWithoutFeedback
+              onPress={() => setShowEnlargedImage(true)}
+            >
               <Image
+                onPress={() => setShowEnlargedImage(true)}
                 source={{ uri: newpost?.image }}
                 style={styles.postImage}
               />
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
             {showEnlargedImage && (
               <EnlargedImageModal
                 visible={showEnlargedImage}
@@ -174,11 +293,13 @@ const Post = ({ newpost }) => {
                   <Text>{newpost.comment.length}</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+
+              <TouchableOpacity onPress={() => savePost(newpost?._id)}>
                 <MaterialCommunityIcons
                   name="bookmark-outline"
                   size={24}
                   color="black"
+                  backgroundColor={newpost?.saved ? "black" : "white"}
                 />
               </TouchableOpacity>
             </View>
@@ -251,6 +372,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 3,
     elevation: 5,
+    zIndex: 1000,
   },
   postImage: {
     width: "100%",

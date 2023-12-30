@@ -15,6 +15,11 @@ const {
   updateUser,
   unFollow,
   getStory,
+  savePost,
+  searchUser,
+  getFollowers,
+  getChatUsers,
+  addChatUser,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -48,30 +53,46 @@ userRouter.post("/add-post", async (req, res) => {
   // let userData = req.user;
   let response = {};
   try {
-    const fileStr = req.body.data;
-    const uploadResponse = await cloudinary.uploader
-      .upload(fileStr, {
-        upload_preset: "cloudinary_react",
-        public_id: Date.now(),
-      })
-      .then(async (response) => {
-        let postData = {
-          userId: req.body.userId,
-          caption: req.body.caption,
-          image: response.url,
-          imageType: req.body.imageType,
-          about: req.body.about,
-          time: new Date(),
-        };
+    let postData = {
+      userId: req.body.userId,
+      caption: req.body.caption,
+      image: req.body.image,
+      imageType: req.body.imageType,
+      about: req.body.about,
+      time: new Date(),
+    };
 
-        await Post.create(postData).then((response) => {
-          if (response) {
-            let resp = {};
-            resp.status = 200;
-            res.send(resp);
-          }
-        });
-      });
+    await Post.create(postData).then((response) => {
+      if (response) {
+        let resp = {};
+        resp.status = 200;
+        res.send(resp);
+      }
+    });
+    // const fileStr = req.body.data;
+    // const uploadResponse = await cloudinary.uploader
+    //   .upload(fileStr, {
+    //     upload_preset: "cloudinary_react",
+    //     public_id: Date.now(),
+    //   })
+    //   .then(async (response) => {
+    //     let postData = {
+    //       userId: req.body.userId,
+    //       caption: req.body.caption,
+    //       image: response.url,
+    //       imageType: req.body.imageType,
+    //       about: req.body.about,
+    //       time: new Date(),
+    //     };
+
+    //     await Post.create(postData).then((response) => {
+    //       if (response) {
+    //         let resp = {};
+    //         resp.status = 200;
+    //         res.send(resp);
+    //       }
+    //     });
+    //   });
   } catch (err) {
     console.error("Error ", err);
     res.status(500).json({ err: "Something went wrong" });
@@ -240,6 +261,36 @@ userRouter.post("/unfollow", async (req, res) => {
 
 userRouter.get("/get-story", async (req, res) => {
   getStory().then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.post("/save-post/:postId", async (req, res) => {
+  savePost(req.params.postId, req.body.userId).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.get("/search-chat", async (req, res) => {
+  searchUser(req.query.userid, req.query.name).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.get("/followers", async (req, res) => {
+  getFollowers(req.query.userid, req.query.name).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.get("/chat-users/:userId", async (req, res) => {
+  getChatUsers(req.params.userId).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.post("/add-chat-user/:userId", async (req, res) => {
+  addChatUser(req.params.userId, req.body).then((response) => {
     res.send(response);
   });
 });

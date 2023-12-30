@@ -1,33 +1,68 @@
-import React from "react";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   Image,
   StyleSheet,
+  SafeAreaView,
+  Pressable,
 } from "react-native";
-
-const Tab = createMaterialTopTabNavigator();
+import { Feather } from "@expo/vector-icons";
+import ChatComponent from "../Components/ChatComponent";
+import { styles } from "../Utils/styles";
+import Modal from "../Components/Modal";
+import { BACKEND_URL } from "../Constants/Api";
+import socket from "../Utils/socket";
+import { EvilIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AllMessagesScreen = ({ navigation }) => {
-  const users = [
-    {
-      id: "1",
-      name: "John Doe",
-      lastChat: "Hello there!",
-      newMessages: 3,
-      imageUrl: "https://placekitten.com/50/50",
-    },
-    {
-      id: "2",
-      name: "Jane Doe",
-      lastChat: "How are you?",
-      newMessages: 1,
-      imageUrl: "https://placekitten.com/51/50",
-    },
-  ];
+  const [visible, setVisible] = useState(false);
+  const [uid, setUid] = useState("637360dbc8559f2ffa05acd5");
+
+  const [rooms, setRooms] = useState([]);
+
+  useLayoutEffect(() => {
+    const fetchGroups = async () => {
+      const storedData = await AsyncStorage.getItem("userData");
+      if (storedData) {
+        setUid(storedData);
+      }
+
+      fetch(`${BACKEND_URL}/api/v1/user/chat-users/${uid}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            setRooms(data);
+          }
+        })
+        .catch((err) => console.error(err));
+    };
+    fetchGroups();
+  }, []);
+
+  useEffect(() => {
+    // socket.on("roomsList", (rooms) => {
+    //   setRooms(rooms);
+    // });
+    const fetchGroups = async () => {
+      const storedData = await AsyncStorage.getItem("userData");
+      if (storedData) {
+        setUid(storedData);
+      }
+
+      fetch(`${BACKEND_URL}/api/v1/user/chat-users/${uid}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            setRooms(data);
+          }
+        })
+        .catch((err) => console.error(err));
+    };
+    fetchGroups();
+  }, [socket]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -50,125 +85,34 @@ const AllMessagesScreen = ({ navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={users}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        style={styles.userList}
-      />
-    </View>
-  );
-};
-
-const RequestsScreen = ({ navigation }) => {
-  const requests = [
-    {
-      id: "3",
-      name: "Alice",
-      requestText: "Can you accept my request?",
-      imageUrl: "https://placekitten.com/52/50",
-    },
-    {
-      id: "4",
-      name: "Bob",
-      requestText: "I would like to connect with you.",
-      imageUrl: "https://placekitten.com/53/50",
-    },
-  ];
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.userContainer}
-      onPress={() =>
-        navigation.navigate("Chat", { userId: item.id, userName: item.name })
-      }
-    >
-      <Image source={{ uri: item.imageUrl }} style={styles.profileImage} />
-      <View style={styles.userInfo}>
-        <Text style={styles.userName}>{item.name}</Text>
-        <Text style={styles.lastChat}>{item.requestText}</Text>
+    <SafeAreaView style={styles.chatscreen}>
+      <View style={styles.chattopContainer}>
+        <View style={styles.chatheader}>
+          <Text style={styles.chatheading}>Messages</Text>
+          <Pressable onPress={() => setVisible(true)}>
+            {/* <Feather name="edit" size={24} color="#0E3D8B" /> */}
+            <EvilIcons name="search" size={24} color="#0E3D8B" />
+          </Pressable>
+        </View>
       </View>
-    </TouchableOpacity>
-  );
-
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={requests}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        style={styles.userList}
-      />
-    </View>
-  );
-};
-
-const Message = () => {
-  return (
-    <Tab.Navigator
-      tabBarOptions={{
-        style: {
-          elevation: 0,
-          shadowOpacity: 0,
-        },
-      }}
-    >
-      <Tab.Screen name="All" component={AllMessagesScreen} />
-      <Tab.Screen name="Requests" component={RequestsScreen} />
-    </Tab.Navigator>
+      {console.log("ROOMS===========>", rooms ? rooms : "no rooms")}
+      <View style={styles.chatlistContainer}>
+        {rooms?.length > 0 ? (
+          <FlatList
+            data={rooms}
+            renderItem={({ item }) => <ChatComponent item={item} />}
+            keyExtractor={(item) => item.id}
+          />
+        ) : (
+          <View style={styles.chatemptyContainer}>
+            <Text style={styles.chatemptyText}>No Chat!</Text>
+            <Text>Click the icon above to start a new chat</Text>
+          </View>
+        )}
+      </View>
+      {visible ? <Modal setVisible={setVisible} /> : ""}
+    </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  userContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 15,
-  },
-  userInfo: {
-    flex: 1,
-  },
-  userName: {
-    fontFamily: "sans-serif-medium",
-    color: "#333",
-    fontWeight: "600",
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  lastChat: {
-    fontFamily: "sans-serif-light",
-    color: "#666",
-    fontWeight: "400",
-  },
-  newMessageBadge: {
-    backgroundColor: "#4caf50",
-    borderRadius: 12,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  newMessageCount: {
-    fontFamily: "sans-serif-medium",
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 12,
-  },
-  userList: {
-    paddingTop: 10,
-  },
-});
-
-export default Message;
+export default AllMessagesScreen;
