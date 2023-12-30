@@ -11,9 +11,9 @@ const UploadScreen = () => {
   const [image, setImage] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [loading,setLoading] = useState(false)
+  const [uid, setUid] = useState("637360dbc8559f2ffa05acd5");
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -43,21 +43,51 @@ const UploadScreen = () => {
         xhr.open('GET', image, true);
         xhr.send(null);
       });
-      const randomBytes = await getRandomBytes(16); // 16 bytes for UUID
+      const randomBytes = await getRandomBytes(16);
     const imageName = `Pictures/Image_${uuidv4({ random: [...randomBytes] })}`;
 
       const ref = firebase.storage().ref().child(imageName);
       const snapshot = await ref.put(blob);
   
-      // Get download URL after the upload is complete
       const downloadURL = await snapshot.ref.getDownloadURL();
       console.log("Download URL: ", downloadURL);
+      
+      const apiUrl = "https://sociobuzz.onrender.com/api/v1/user/add-post";
+      //const apiUrl = 'http://192.168.214.245:5000/api/v1/user/add-post'
+      const userId = "637360dbc8559f2ffa05acd5";
+      const caption = "Add your caption here";
+      const imageType = "jpg";
+      const about = "About your post";
+
+      const postData = {
+        userId,
+        caption,
+        image: downloadURL,
+        imageType,
+        about,
+      };
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
+
+      const responseData = await response.json();
+
+      if (responseData.status === 200) {
+        console.log("Post uploaded successfully!");
+      } else {
+        console.error("Error uploading post:", responseData);
+      }
       setLoading(false)
   
-      // Update state or perform other actions with the download URL
+      
       setImage(downloadURL);
-  
-      // Clean up resources
+      
+    
       blob.close();
     } catch (error) {
       console.error("Upload error:", error);

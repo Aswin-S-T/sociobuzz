@@ -117,32 +117,34 @@ const Profile = () => {
     fetchPost();
   }, []);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(true);
-        const storedData = await AsyncStorage.getItem("userData");
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const storedData = await AsyncStorage.getItem("userData");
 
-        let uid = "637360dbc8559f2ffa05acd5";
-        let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
+      let uid = "637360dbc8559f2ffa05acd5";
+      let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
 
-        const response = await fetch(url);
-        const data = await response?.json();
+      const response = await fetch(url);
+      const data = await response?.json();
 
-        if (data && data?.data) {
-          setProfileData(data?.data);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+      if (data && data?.data) {
+        setProfileData(data?.data);
+        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    
 
     fetchUserData();
   }, []);
   const onRefresh = () => {
     setRefreshing(true);
-    fetchData();
+    fetchUserData();
   };
   return (
 
