@@ -17,6 +17,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { BACKEND_URL } from "../Constants/Api";
+import UploadScreen from "../Components/UploadScreen";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -251,7 +252,8 @@ const Profile = () => {
               
               <View style={{ margin: 10 }}>
                 {/* <Button title="Add Post" /> */}
-                <Button title="Add Post" onPress={pickImage} />
+                {/* <Button title="Add Post" onPress={pickImage} /> */}
+                <UploadScreen />
                 {image && (
                   <View
                     style={{
