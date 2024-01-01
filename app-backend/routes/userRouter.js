@@ -20,6 +20,7 @@ const {
   getFollowers,
   getChatUsers,
   addChatUser,
+  deletePost,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -294,5 +295,11 @@ userRouter.post("/add-chat-user/:userId", async (req, res) => {
     res.send(response);
   });
 });
+
+userRouter.post('/delete-post/:postId',async(req,res)=>{
+  deletePost(req.params.postId).then((response)=>{
+    res.send(response)
+  })
+})
 
 module.exports = userRouter;

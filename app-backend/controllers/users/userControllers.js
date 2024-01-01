@@ -429,4 +429,11 @@ module.exports = {
       });
     });
   },
+  deletePost:(postId)=>{
+    return new Promise((resolve,reject)=>{
+      Post.deleteOne({_id : postId}).then(()=>{
+        resolve(successResponse)
+      })
+    })
+  }
 };
