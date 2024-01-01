@@ -455,11 +455,11 @@ module.exports = {
            
             if (post && post.length > 0) {
               console.log('POST----------->', post)
-              successResponse.post = post
-              resolve(successResponse)
+              
+              resolve(post)
             } else {
-              successResponse.data = savedPosts
-              resolve(successResponse)
+             
+              resolve(savedPosts)
             }
           })
         }
