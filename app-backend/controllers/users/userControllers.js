@@ -454,6 +454,7 @@ module.exports = {
           Post.find({ _id:{$in:objectIdList} },{imageType : 0,createdAt:0,updatedAt:0,'__v':0}).then((post)=>{
            
             if (post && post.length > 0) {
+              console.log('POST----------->', post)
               successResponse.post = post
               resolve(successResponse)
             } else {
