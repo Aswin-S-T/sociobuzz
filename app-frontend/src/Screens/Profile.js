@@ -1,24 +1,23 @@
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Image,
   TouchableOpacity,
-  ScrollView,
   Button,
   TextInput,
   FlatList,
   RefreshControl,
+  ActivityIndicator
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import Post from "../Components/Post";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spinner from "react-native-loading-spinner-overlay";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
-import { BACKEND_URL } from "../Constants/Api";
-import UploadScreen from "../Components/UploadScreen";
 import { useNavigation } from "@react-navigation/native";
+import { BACKEND_URL } from "../Constants/Api";
+import Post from "../Components/Post";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -28,7 +27,9 @@ const Profile = () => {
   const [image, setImage] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
-  const [uid,setUid] = useState('')
+  const [uid, setUid] = useState("");
+  const [selectedTab, setSelectedTab] = useState("All Posts");
+  const [savedPost,setSavedPost] = useState([])
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -157,24 +158,43 @@ const Profile = () => {
      
     });
   };
+  const handleTabChange = (tab) => {
+    setSelectedTab(tab);
+  };
+
+  const fetchSavedPost = async()=>{
+    try {
+      let url = `${BACKEND_URL}/api/v1/user/saved-post/${uid}`;
+
+      const response = await fetch(url);
+      const data = await response?.json();
+      
+      if (data ) {
+        setSavedPost(data);
+        setRefreshing(false);
+      }
+    } catch (error) {
+      console.log('Error while fetching saved post')
+    }
+  }
 
   return (
-
     <FlatList
-      data={[{ key: 'profile' }]}
+      data={[{ key: "profile" }]}
       renderItem={({ item }) => (
         <>
           {loading ? (
             <>
-              <Spinner
+              {/* <Spinner
                 visible={loading}
                 textContent={"Loading..."}
                 textStyle={{ color: "#FFF" }}
-              />
+              /> */}
+               <ActivityIndicator size="small" color="#0000ff" />
             </>
           ) : (
             <>
-            <View style={{ backgroundColor: "#fff", height: "100%" }}>
+              <View style={{ backgroundColor: "#fff", height: "100%" }}>
               <View style={styles.postContainer}>
                 <Image
                   style={styles.tinyLogo}
@@ -262,98 +282,160 @@ const Profile = () => {
                   </View>
                 </View>
               </View>
-  
-              
-              <View style={{ margin: 10 }}>
-                {/* <Button title="Add Post" /> */}
-                <Button title="Add Post" onPress={handleNavigation} />
-                {/* <UploadScreen /> */}
-                {image && (
-                  <View
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      margin: 10,
-                      top: 10,
-                      position: "relative",
-                    }}
-                  >
-                    <Image
-                      source={{ uri: image }}
-                      style={{ width: 200, height: 200 }}
-                    />
-                    <TextInput
-                      style={{
-                        top: 20,
-                        position: "relative",
-                        background: "transparent",
-                        border: "none",
-                        padding: 10,
-                        outline: "none",
-                        borderRadius: 20,
-                        borderBottomWidth: 2,
-                        borderBottomColor: "#0E3D8B",
-                      }}
-                      placeholder="Add a caption"
-                    />
-                    <TouchableOpacity
-                      onPress={uploadPost}
-                      style={{
-                        borderRadius: 40,
-                        backgroundColor: "#0E3D8B",
-                        width: "50%",
-                        color: "#fff",
-                        padding: 10,
-                        border: "none",
-                        outline: "none",
-                        marginTop: 20,
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text
+
+                <View style={{ margin: 10 }}>
+                  <Button title="Add Post" onPress={handleNavigation} />
+                  {image && (
+                    <>
+                      <View
                         style={{
                           display: "flex",
                           justifyContent: "center",
-                          alignContent: "center",
-                          alignItems: "center",
-                          fontFamily: "sans-serif",
-                          fontWeight: "bold",
-                          color: "#fff",
+                          margin: 10,
+                          top: 10,
+                          position: "relative",
                         }}
                       >
-                        Upload
-                      </Text>
-                    </TouchableOpacity>
+                        <Image
+                          source={{ uri: image }}
+                          style={{ width: 200, height: 200 }}
+                        />
+                        <TextInput
+                          style={{
+                            top: 20,
+                            position: "relative",
+                            background: "transparent",
+                            border: "none",
+                            padding: 10,
+                            outline: "none",
+                            borderRadius: 20,
+                            borderBottomWidth: 2,
+                            borderBottomColor: "#0E3D8B",
+                          }}
+                          placeholder="Add a caption"
+                        />
+                        <TouchableOpacity
+                          onPress={uploadPost}
+                          style={{
+                            borderRadius: 40,
+                            backgroundColor: "#0E3D8B",
+                            width: "50%",
+                            color: "#fff",
+                            padding: 10,
+                            border: "none",
+                            outline: "none",
+                            marginTop: 20,
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignContent: "center",
+                              alignItems: "center",
+                              fontFamily: "sans-serif",
+                              fontWeight: "bold",
+                              color: "#fff",
+                            }}
+                          >
+                            Upload
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </>
+                  )}
+                </View>
+                <View style={styles.line}></View>
+
+                
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                  }}
+                >
+                  <TouchableOpacity
+                    style={[
+                      styles.tabButton,
+                      selectedTab === "All Posts" && styles.activeTab,
+                    ]}
+                    onPress={() => handleTabChange("All Posts")}
+                  >
+                    <Text
+                      style={
+                        selectedTab === "All Posts" && styles.activeTabText
+                      }
+                    >
+                      All Posts
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.tabButton,
+                      selectedTab === "Saved Posts" && styles.activeTab,
+                    ]}
+                    onPress={() => {
+                      handleTabChange("Saved Posts")
+                      fetchSavedPost()
+                    }}
+                  >
+                    <Text
+                      style={
+                        selectedTab === "Saved Posts" && styles.activeTabText
+                      }
+                    >
+                      Saved Posts
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                
+                {selectedTab === "All Posts" ? (
+                  <View style={{top:15,position:'relative'}}>
+                    {myPost?.length > 0 && (
+                      <FlatList
+                        data={myPost}
+                        renderItem={({ item }) => <Post newpost={item} />}
+                        keyExtractor={(item) => item._id.toString()}
+                        refreshControl={
+                          <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                          />
+                        }
+                      />
+                    )}
+                  </View>
+                ) : (
+                  <View style={{top:15,position:'relative'}}>
+                    {savedPost?.length > 0 && (
+                      <FlatList
+                        data={savedPost}
+                        renderItem={({ item }) => <Post newpost={item} />}
+                        keyExtractor={(item) => item._id.toString()}
+                        refreshControl={
+                          <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                          />
+                        }
+                      />
+                    )}
+                    
                   </View>
                 )}
               </View>
-              <View style={styles.line}></View>
-              <View>
-                {myPost?.length > 0 && (
-                  <>
-                    <FlatList
-                      data={myPost}
-                      renderItem={({ item }) => <Post newpost={item} />}
-                      keyExtractor={(item) => item._id.toString()}
-                      refreshControl={
-                        <RefreshControl
-                          refreshing={refreshing}
-                          onRefresh={onRefresh}
-                        />
-                      }
-                    />
-                  </>
-                )}
-              </View>
-            </View>
-          </>
+            </>
           )}
         </>
       )}
       keyExtractor={(item) => item.key}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     />
   );
 };
@@ -402,6 +484,22 @@ const styles = StyleSheet.create({
     left: 40,
     position: "relative",
   },
+  tabButton: {
+    padding: 10,
+    margin: 5,
+  },
+  activeTab: {
+    borderBottomColor:"#0E3D8B",
+    borderBottomWidth:2
+  },
+  activeTabText: {
+    color: "#111",
+    fontFamily:'sans-serif',
+    fontWeight:'bold'
+  },
 });
 
 export default Profile;
+
+
+

@@ -7,7 +7,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableWithoutFeedback,
-  ToastAndroid
+  ToastAndroid,
+  ActivityIndicator
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -105,7 +106,7 @@ const Post = ({ newpost }) => {
   const [showEnlargedImage, setShowEnlargedImage] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const fetchData = async () => {
       const storedData = await AsyncStorage.getItem("userData");
 
@@ -123,7 +124,7 @@ const Post = ({ newpost }) => {
 
         setPost(modifiedData);
       }
-      setLoading(false);
+      // setLoading(false);
     };
     fetchData();
   }, []);
@@ -199,13 +200,7 @@ const Post = ({ newpost }) => {
 
   return (
     <ScrollView>
-      {loading ? (
-        <Spinner
-          visible={loading}
-          textContent={"Loading..."}
-          textStyle={{ color: "#FFF" }}
-        />
-      ) : (
+      {
         newpost && (
           <View key={newpost._id} style={styles.postContainer}>
             <View style={styles.postHeader}>
@@ -328,7 +323,7 @@ const Post = ({ newpost }) => {
             )}
           </View>
         )
-      )}
+      }
     </ScrollView>
   );
 };
