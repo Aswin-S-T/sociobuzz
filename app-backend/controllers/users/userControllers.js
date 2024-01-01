@@ -435,5 +435,13 @@ module.exports = {
         resolve(successResponse)
       })
     })
+  },
+  editProfile:(userId,newData)=>{
+    return new Promise((resolve,reject)=>{
+      User.updateOne({_id : userId},newData).then((result)=>{
+        successResponse.message = 'Profile edited successfully'
+        resolve(successResponse)
+      })
+    })
   }
 };
