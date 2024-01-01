@@ -188,25 +188,34 @@ userRouter.post("/uploadProfile-image", async (req, res) => {
 
 userRouter.post("/upload-story", async (req, res) => {
   let response = {};
-
+  //
   try {
-    const fileStr = req.body.data;
-    const uploadResponse = await cloudinary.uploader
-      .upload(fileStr, {
-        upload_preset: "cloudinary_react",
-        public_id: Date.now(),
-      })
-      .then(async (response) => {
-        const newStory = new Story({
-          userId: req.body.userId,
-          story: response.url,
-          username: req.body.username,
-        });
-        newStory.save();
-        let resp = {};
-        resp.status = 200;
-        res.send(resp);
-      });
+    // const fileStr = req.body.data;
+    // const uploadResponse = await cloudinary.uploader
+    //   .upload(fileStr, {
+    //     upload_preset: "cloudinary_react",
+    //     public_id: Date.now(),
+    //   })
+    //   .then(async (response) => {
+    //     const newStory = new Story({
+    //       userId: req.body.userId,
+    //       story: response.url,
+    //       username: req.body.username,
+    //     });
+    //     newStory.save();
+    //     let resp = {};
+    //     resp.status = 200;
+    //     res.send(resp);
+    //   });
+    const newStory = new Story({
+      userId: req.body.userId,
+      story: req.body.story,
+      username: req.body.username,
+    });
+    newStory.save();
+    let resp = {};
+    resp.status = 200;
+    res.send(resp);
   } catch (err) {
     console.error("Error ", err);
     res.status(500).json({ err: "Something went wrong" });
