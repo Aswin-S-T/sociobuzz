@@ -221,7 +221,7 @@ const Post = ({ newpost }) => {
               >
                 {formatTimeDifference(newpost?.time)}
               </Text>
-              <TouchableOpacity onPress={handleOptionsPress}>
+              {/* <TouchableOpacity onPress={handleOptionsPress}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
                   size={24}
@@ -244,7 +244,7 @@ const Post = ({ newpost }) => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-              )}
+              )} */}
             </View>
             <TouchableWithoutFeedback
               onPress={() => setShowEnlargedImage(true)}
@@ -367,8 +367,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 3,
     elevation: 5,
-    zIndex: 1000,
+    zIndex: 1000, // Increase the zIndex value
   },
+  
   postImage: {
     width: "100%",
     height: 400,
