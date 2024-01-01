@@ -132,10 +132,16 @@ export const styles = StyleSheet.create({
     paddingVertical: 50,
     paddingHorizontal: 20,
   },
+  sameRow:{
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between'
+  },
   modalinput: {
-    borderWidth: 1,
+    borderWidth: 0.5,
     padding: 8,
     borderRadius: 20,
+    width:'100%'
   },
   modalsubheading: {
     fontSize: 20,
@@ -211,4 +217,10 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  unFOllowBtn:{
+    padding:8,
+    color:"#fff",
+    backgroundColor:"darkcyan",
+    borderRadius:10
+  }
 });

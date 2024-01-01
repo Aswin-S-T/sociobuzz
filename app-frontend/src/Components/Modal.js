@@ -28,7 +28,7 @@ const Modal = ({ setVisible }) => {
       setUid(storedData);
     }
     if (!value || value.trim() === "") {
-      url = `${BACKEND_URL}/api/v1/user/search-chat?userid=${uid}`;
+      url = `${BACKEND_URL}/api/v1/user/search-chat?userid=${uid}`; 
     } else {
       url = `${BACKEND_URL}/api/v1/user/search-chat?userid=${uid}&name=${value}`;
     }

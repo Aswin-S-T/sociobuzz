@@ -158,6 +158,18 @@ const Profile = () => {
      
     });
   };
+  const gotoFollowers = () => {
+    navigation.navigate("Followers", {
+      id: uid,
+     
+    });
+  };
+  const gotoFollowing = () => {
+    navigation.navigate("Following", {
+      id: uid,
+     
+    });
+  };
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
   };
@@ -232,37 +244,43 @@ const Profile = () => {
               >
                 <View>
                   <View style={styles.bold}>
+                    <TouchableOpacity onPress={gotoFollowers} style={styles.followingBtn}>
                     <Text
                       style={{
                         fontWeight: "bold",
                         fontFamily: "sans-serif",
-                        color: "darkblue",
+                        color: "white",
                         fontSize: 20,
                       }}
                     >
                       {profileData?.followers?.length}
                     </Text>
+                    <View style={styles.semibold}>
+                    <Text style={{left:4,top:-2,position:"relative",color:"white"}}>Followers</Text>
                   </View>
-                  <View style={styles.semibold}>
-                    <Text>Followers</Text>
+                    </TouchableOpacity>
                   </View>
+                 
                 </View>
                 <View style={{ left: 50, position: "relative" }}>
                   <View style={styles.bold}>
+                    <TouchableOpacity onPress={gotoFollowing} style={styles.followerBtn}>
                     <Text
                       style={{
                         fontWeight: "bold",
                         fontFamily: "sans-serif",
-                        color: "darkblue",
+                        color: "#111",
                         fontSize: 20,
                       }}
                     >
                       {profileData?.following?.length}
                     </Text>
+                    <View style={styles.semibold}>
+                    <Text style={{left:4,top:-2,position:"relative",color:"#111"}}>Following</Text>
                   </View>
-                  <View style={styles.semibold}>
-                    <Text>Following</Text>
+                    </TouchableOpacity>
                   </View>
+                  
                 </View>
                 <View style={{ left: 100, position: "relative" }}>
                   <View style={styles.bold}>
@@ -497,6 +515,24 @@ const styles = StyleSheet.create({
     fontFamily:'sans-serif',
     fontWeight:'bold'
   },
+  followingBtn:{
+    padding:8,
+    backgroundColor:'#0FC1DE',
+    display:'flex',
+    justifyContent:"space-between",
+    flexDirection:'row',
+    borderRadius:10,
+    color:"white"
+  },
+  followerBtn:{
+    padding:8,
+    backgroundColor:'whitesmoke',
+    display:'flex',
+    justifyContent:"space-between",
+    flexDirection:'row',
+    borderRadius:10,
+    color:"white"
+  }
 });
 
 export default Profile;

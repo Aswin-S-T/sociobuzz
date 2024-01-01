@@ -13,6 +13,8 @@ import UserProfile from "./src/Screens/UserProfile";
 import ChatScreen from "./src/Screens/ChatScreen";
 import Messaging from "./src/Screens/Messaging";
 import UploadScreen from "./src/Components/UploadScreen";
+import FollowersList from "./src/Screens/FollowersList";
+import FollowingList from "./src/Screens/FollowingList";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -166,6 +168,46 @@ export default function App() {
           component={UploadScreen}
           options={{
             headerTitle: "Upload post",
+            headerStyle: {
+              backgroundColor: "#fff",
+              shadowColor: "rgba(0, 0, 0, 0.1)",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.8,
+              shadowRadius: 20,
+              elevation: 5,
+            },
+            headerTitleStyle: {
+              color: "#0E3D8B",
+              fontWeight: "bold",
+              fontFamily: "sans-serif",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Followers"
+          component={FollowersList}
+          options={{
+            headerTitle: "Followers",
+            headerStyle: {
+              backgroundColor: "#fff",
+              shadowColor: "rgba(0, 0, 0, 0.1)",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.8,
+              shadowRadius: 20,
+              elevation: 5,
+            },
+            headerTitleStyle: {
+              color: "#0E3D8B",
+              fontWeight: "bold",
+              fontFamily: "sans-serif",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Following"
+          component={FollowingList}
+          options={{
+            headerTitle: "Following",
             headerStyle: {
               backgroundColor: "#fff",
               shadowColor: "rgba(0, 0, 0, 0.1)",
