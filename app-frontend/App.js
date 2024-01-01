@@ -16,7 +16,8 @@ import UploadScreen from "./src/Components/UploadScreen";
 import FollowersList from "./src/Screens/FollowersList";
 import FollowingList from "./src/Screens/FollowingList";
 import SettingsScreen from "./src/Screens/SettingsScreen";
-
+import SecurityScreen from "./src/Screens/SecurityScreen";
+import AboutUsPage from "./src/Pages/AboutUsPage";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -230,6 +231,46 @@ export default function App() {
           component={SettingsScreen}
           options={{
             headerTitle: "Settings",
+            headerStyle: {
+              backgroundColor: "#fff",
+              shadowColor: "rgba(0, 0, 0, 0.1)",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.8,
+              shadowRadius: 20,
+              elevation: 5,
+            },
+            headerTitleStyle: {
+              color: "#0E3D8B",
+              fontWeight: "bold",
+              fontFamily: "sans-serif",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Security"
+          component={SecurityScreen}
+          options={{
+            headerTitle: "Security Options",
+            headerStyle: {
+              backgroundColor: "#fff",
+              shadowColor: "rgba(0, 0, 0, 0.1)",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.8,
+              shadowRadius: 20,
+              elevation: 5,
+            },
+            headerTitleStyle: {
+              color: "#0E3D8B",
+              fontWeight: "bold",
+              fontFamily: "sans-serif",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="About"
+          component={AboutUsPage}
+          options={{
+            headerTitle: "About Us",
             headerStyle: {
               backgroundColor: "#fff",
               shadowColor: "rgba(0, 0, 0, 0.1)",

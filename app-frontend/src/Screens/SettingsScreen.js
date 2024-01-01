@@ -18,6 +18,9 @@ const SettingsScreen = () => {
   const navigateToSecurity = () => {
     navigation.navigate("Security");
   };
+  const navigateToAbout = () => {
+    navigation.navigate("About");
+  };
 
   return (
     <View style={{ backgroundColor: "white", height: "100%" }}>
@@ -53,7 +56,7 @@ const SettingsScreen = () => {
       </View>
       <View style={{ margin: 20, top: -20, position: "relative" }}>
         <TouchableOpacity
-          onPress={navigateToProfile}
+          onPress={navigateToSecurity}
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -83,7 +86,7 @@ const SettingsScreen = () => {
       </View>
       <View style={{ margin: 20, top: -40, position: "relative" }}>
         <TouchableOpacity
-          onPress={navigateToProfile}
+          onPress={navigateToAbout}
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -132,12 +135,7 @@ const SettingsScreen = () => {
             </Text>
           </View>
           <View style={{ marginLeft: 10 }}>
-            <FontAwesome
-              name="arrow-right"
-              size={18}
-              color="#444"
-              style={{ top: 10, position: "relative" }}
-            />
+            {/* */}
           </View>
         </TouchableOpacity>
       </View>
