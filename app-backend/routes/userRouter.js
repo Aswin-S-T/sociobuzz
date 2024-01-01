@@ -22,6 +22,7 @@ const {
   addChatUser,
   deletePost,
   editProfile,
+  savedPost,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -305,6 +306,12 @@ userRouter.post('/delete-post/:postId',async(req,res)=>{
 
 userRouter.post('/edit-profile/:userId',async(req,res)=>{
   editProfile(req.params.userId,req.body).then((response)=>{
+    res.send(response)
+  })
+})
+
+userRouter.get('/saved-post/:userId',async(req,res)=>{
+  savedPost(req.params.userId).then((response)=>{
     res.send(response)
   })
 })

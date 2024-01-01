@@ -1,6 +1,4 @@
 const bcrypt = require("bcrypt");
-let { objectId } = require("mongoose");
-
 const jwt = require("jsonwebtoken");
 const User = require("../../models/users/userSchema");
 const { sendNotification } = require("../../utils/utils");
@@ -8,6 +6,8 @@ const Post = require("../../models/post/postSchema");
 const Messages = require("../../models/chat/messageModel");
 const Story = require("../../models/story/StorySchema");
 const JWT_SECRET = process.env.JWT_SECRET || "something secret";
+const mongoose = require('mongoose')
+const newObjectId = new mongoose.Types.ObjectId();
 
 let successResponse = {
   status: 200,
@@ -441,6 +441,28 @@ module.exports = {
       User.updateOne({_id : userId},newData).then((result)=>{
         successResponse.message = 'Profile edited successfully'
         resolve(successResponse)
+      })
+    })
+  },
+  savedPost:(userId)=>{
+    return new Promise((resolve,reject)=>{
+      let savedPosts = []
+      User.findOne({_id : userId},{saved_post:1}).then((saved)=>{
+        if (saved.saved_post && saved.saved_post.length > 0){
+          let list = saved.saved_post
+          const objectIdList = list.map((id) => new mongoose.Types.ObjectId(id));
+          Post.find({ _id:{$in:objectIdList} },{imageType : 0,createdAt:0,updatedAt:0,'__v':0}).then((post)=>{
+           
+            if (post && post.length > 0) {
+              successResponse.post = post
+              resolve(successResponse)
+            } else {
+              successResponse.data = savedPosts
+              resolve(successResponse)
+            }
+          })
+        }
+        
       })
     })
   }
