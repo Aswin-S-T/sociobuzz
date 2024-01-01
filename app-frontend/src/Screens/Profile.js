@@ -224,7 +224,7 @@ const Profile = () => {
                       marginTop: 20,
                     }}
                   >
-                    <View style={{ left: -1, position: "relative" }}>
+                    <View style={{ left: 9, position: "relative" }}>
                       <View style={styles.bold}>
                         <Text
                           style={{
@@ -237,12 +237,17 @@ const Profile = () => {
                         </Text>
                       </View>
                       <View style={styles.semibold}>
-                        <Text>Actess & Musician</Text>
+                        <Text>{profileData?.bio}</Text>
                       </View>
                     </View>
                   </View>
                   <TouchableOpacity onPress={gotoSettings}>
-                    <Ionicons name="settings-sharp" size={24} color="black" style={{left:-5,position:'relative'}} />
+                    <Ionicons
+                      name="settings-sharp"
+                      size={24}
+                      color="black"
+                      style={{ left: -5, position: "relative" }}
+                    />
                   </TouchableOpacity>
                 </View>
                 <View
@@ -532,7 +537,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    left: 40,
+    left: 20,
     position: "relative",
   },
   tabButton: {

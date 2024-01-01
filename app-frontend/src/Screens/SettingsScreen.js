@@ -1,18 +1,18 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Ionicons } from '@expo/vector-icons'; 
-import { FontAwesome } from '@expo/vector-icons'; 
-import { Foundation } from '@expo/vector-icons'; 
-
+import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+import { Foundation } from "@expo/vector-icons";
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
+  const [uid, setUid] = useState("637360dbc8559f2ffa05acd5");
 
   const navigateToProfile = () => {
-    navigation.navigate("Profile");
+    navigation.navigate("EditProfile",{ userId: uid });
   };
 
   const navigateToSecurity = () => {
@@ -40,7 +40,14 @@ const SettingsScreen = () => {
               color="#444"
               style={{ top: 25, position: "relative" }}
             />
-            <Text style={{ left: 40, position: "relative", fontSize: 17,color:"#444" }}>
+            <Text
+              style={{
+                left: 40,
+                position: "relative",
+                fontSize: 17,
+                color: "#444",
+              }}
+            >
               Profile
             </Text>
           </View>
@@ -70,7 +77,14 @@ const SettingsScreen = () => {
               color="#444"
               style={{ top: 25, position: "relative" }}
             />
-            <Text style={{ left: 40, position: "relative", fontSize: 17 ,color:"#444"}}>
+            <Text
+              style={{
+                left: 40,
+                position: "relative",
+                fontSize: 17,
+                color: "#444",
+              }}
+            >
               Security
             </Text>
           </View>
@@ -100,7 +114,14 @@ const SettingsScreen = () => {
               color="#444"
               style={{ top: 25, position: "relative" }}
             />
-            <Text style={{ left: 40, position: "relative", fontSize: 17 ,color:"#444"}}>
+            <Text
+              style={{
+                left: 40,
+                position: "relative",
+                fontSize: 17,
+                color: "#444",
+              }}
+            >
               About Us
             </Text>
           </View>
@@ -130,13 +151,18 @@ const SettingsScreen = () => {
               color="#444"
               style={{ top: 25, position: "relative" }}
             />
-            <Text style={{ left: 40, position: "relative", fontSize: 17 ,color:"#444"}}>
+            <Text
+              style={{
+                left: 40,
+                position: "relative",
+                fontSize: 17,
+                color: "#444",
+              }}
+            >
               Logout
             </Text>
           </View>
-          <View style={{ marginLeft: 10 }}>
-            {/* */}
-          </View>
+          <View style={{ marginLeft: 10 }}>{/* */}</View>
         </TouchableOpacity>
       </View>
     </View>
