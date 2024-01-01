@@ -390,6 +390,32 @@ module.exports = {
         });
     });
   },
+  getFollowing: (userId, key) => {
+    return new Promise((resolve, reject) => {
+      User.findOne({ _id: userId }, { following: 1 })
+        .then((following) => {
+          const followerArr =
+          following?.following?.map((item) => ({
+              _id: item._id,
+              username: item.username,
+              profileImage: item.profileImage,
+            })) || [];
+
+          let matchingUsers = followerArr;
+          if (key) {
+            matchingUsers = followerArr.filter((user) =>
+              user.username.toLowerCase().startsWith(key.toLowerCase())
+            );
+          }
+
+          resolve(matchingUsers);
+        })
+        .catch((error) => {
+          console.error("Error fetching followers:", error);
+          reject(error);
+        });
+    });
+  },
   getChatUsers: (userId) => {
     return new Promise((resolve, reject) => {
       User.findOne({ _id: userId }, { chat_users: 1 }).then((result) => {

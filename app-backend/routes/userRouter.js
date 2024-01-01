@@ -23,6 +23,7 @@ const {
   deletePost,
   editProfile,
   savedPost,
+  getFollowing,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -282,6 +283,12 @@ userRouter.get("/search-chat", async (req, res) => {
 
 userRouter.get("/followers", async (req, res) => {
   getFollowers(req.query.userid, req.query.name).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.get("/following", async (req, res) => {
+  getFollowing(req.query.userid, req.query.name).then((response) => {
     res.send(response);
   });
 });
