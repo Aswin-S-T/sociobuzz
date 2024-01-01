@@ -156,30 +156,30 @@ userRouter.post("/follow", async (req, res) => {
 userRouter.post("/uploadProfile-image", async (req, res) => {
   let response = {};
   try {
-    const fileStr = req.body.data;
-    const uploadResponse = await cloudinary.uploader
-      .upload(fileStr, {
-        upload_preset: "cloudinary_react",
-        public_id: Date.now(),
-      })
-      .then(async (response) => {
-        let profileData = {
-          userId: req.body.userId,
-          profileImage: response.url,
-        };
-        let profileImage = response?.url;
+    // const fileStr = req.body.data;
+    // const uploadResponse = await cloudinary.uploader
+    //   .upload(fileStr, {
+    //     upload_preset: "cloudinary_react",
+    //     public_id: Date.now(),
+    //   })
+    //   .then(async (response) => {
+    //     let profileData = {
+    //       userId: req.body.userId,
+    //       profileImage: response.url,
+    //     };
+    //     let profileImage = response?.url;
 
-        await User.updateOne(
-          { _id: req.body.userId },
-          { profileImage: profileImage }
-        ).then((response) => {
-          if (response) {
-            let resp = {};
-            resp.status = 200;
-            res.send(resp);
-          }
-        });
-      });
+    await User.updateOne(
+      { _id: req.body.userId },
+      { profileImage: req.body.profileImage }
+    ).then((response) => {
+      if (response) {
+        let resp = {};
+        resp.status = 200;
+        res.send(resp);
+      }
+    });
+    //   });
   } catch (err) {
     console.error("Error ", err);
     res.status(500).json({ err: "Something went wrong" });
@@ -305,22 +305,22 @@ userRouter.post("/add-chat-user/:userId", async (req, res) => {
   });
 });
 
-userRouter.post('/delete-post/:postId',async(req,res)=>{
-  deletePost(req.params.postId).then((response)=>{
-    res.send(response)
-  })
-})
+userRouter.post("/delete-post/:postId", async (req, res) => {
+  deletePost(req.params.postId).then((response) => {
+    res.send(response);
+  });
+});
 
-userRouter.post('/edit-profile/:userId',async(req,res)=>{
-  editProfile(req.params.userId,req.body).then((response)=>{
-    res.send(response)
-  })
-})
+userRouter.post("/edit-profile/:userId", async (req, res) => {
+  editProfile(req.params.userId, req.body).then((response) => {
+    res.send(response);
+  });
+});
 
-userRouter.get('/saved-post/:userId',async(req,res)=>{
-  savedPost(req.params.userId).then((response)=>{
-    res.send(response)
-  })
-})
+userRouter.get("/saved-post/:userId", async (req, res) => {
+  savedPost(req.params.userId).then((response) => {
+    res.send(response);
+  });
+});
 
 module.exports = userRouter;
