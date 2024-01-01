@@ -9,7 +9,7 @@ import {
   TextInput,
   FlatList,
   RefreshControl,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -18,6 +18,7 @@ import * as FileSystem from "expo-file-system";
 import { useNavigation } from "@react-navigation/native";
 import { BACKEND_URL } from "../Constants/Api";
 import Post from "../Components/Post";
+import { Ionicons } from "@expo/vector-icons";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -29,7 +30,7 @@ const Profile = () => {
   const navigation = useNavigation();
   const [uid, setUid] = useState("");
   const [selectedTab, setSelectedTab] = useState("All Posts");
-  const [savedPost,setSavedPost] = useState([])
+  const [savedPost, setSavedPost] = useState([]);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -109,7 +110,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchPost = async () => {
       let uid = "637360dbc8559f2ffa05acd5";
-      setUid(uid)
+      setUid(uid);
       let url = `${BACKEND_URL}/api/v1/user/my-post/${uid}`;
 
       const response = await fetch(url);
@@ -143,8 +144,6 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    
-
     fetchUserData();
   }, []);
   const onRefresh = () => {
@@ -155,40 +154,44 @@ const Profile = () => {
   const handleNavigation = () => {
     navigation.navigate("Upload", {
       id: uid,
-     
     });
   };
   const gotoFollowers = () => {
     navigation.navigate("Followers", {
       id: uid,
-     
     });
   };
   const gotoFollowing = () => {
     navigation.navigate("Following", {
       id: uid,
-     
     });
   };
+
+  const gotoSettings = () => {
+    navigation.navigate("Settings", {
+      id: uid,
+    });
+  };
+
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
   };
 
-  const fetchSavedPost = async()=>{
+  const fetchSavedPost = async () => {
     try {
       let url = `${BACKEND_URL}/api/v1/user/saved-post/${uid}`;
 
       const response = await fetch(url);
       const data = await response?.json();
-      
-      if (data ) {
+
+      if (data) {
         setSavedPost(data);
         setRefreshing(false);
       }
     } catch (error) {
-      console.log('Error while fetching saved post')
+      console.log("Error while fetching saved post");
     }
-  }
+  };
 
   return (
     <FlatList
@@ -202,104 +205,137 @@ const Profile = () => {
                 textContent={"Loading..."}
                 textStyle={{ color: "#FFF" }}
               /> */}
-               <ActivityIndicator size="small" color="#0000ff" />
+              <ActivityIndicator size="small" color="#0000ff" />
             </>
           ) : (
             <>
               <View style={{ backgroundColor: "#fff", height: "100%" }}>
-              <View style={styles.postContainer}>
-                <Image
-                  style={styles.tinyLogo}
-                  source={{
-                    uri: profileData?.profileImage,
-                  }}
-                />
+                <View style={styles.postContainer}>
+                  <Image
+                    style={styles.tinyLogo}
+                    source={{
+                      uri: profileData?.profileImage,
+                    }}
+                  />
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      marginTop: 20,
+                    }}
+                  >
+                    <View style={{ left: -1, position: "relative" }}>
+                      <View style={styles.bold}>
+                        <Text
+                          style={{
+                            fontWeight: "bold",
+                            fontSize: 18,
+                            fontFamily: "sans-serif",
+                          }}
+                        >
+                          {profileData?.username}
+                        </Text>
+                      </View>
+                      <View style={styles.semibold}>
+                        <Text>Actess & Musician</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <TouchableOpacity onPress={gotoSettings}>
+                    <Ionicons name="settings-sharp" size={24} color="black" style={{left:-5,position:'relative'}} />
+                  </TouchableOpacity>
+                </View>
                 <View
                   style={{
                     display: "flex",
-                    flexDirection: "column",
-                    marginTop: 20,
+                    justifyContent: "center",
+                    left: -50,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    position: "relative",
+                    margin: 10,
                   }}
                 >
-                  <View style={{ left: -60, position: "relative" }}>
+                  <View>
                     <View style={styles.bold}>
-                      <Text style={{fontWeight:'bold',fontSize:18,fontFamily:'sans-serif'}}>{profileData?.username}</Text>
+                      <TouchableOpacity
+                        onPress={gotoFollowers}
+                        style={styles.followingBtn}
+                      >
+                        <Text
+                          style={{
+                            fontWeight: "bold",
+                            fontFamily: "sans-serif",
+                            color: "white",
+                            fontSize: 20,
+                          }}
+                        >
+                          {profileData?.followers?.length}
+                        </Text>
+                        <View style={styles.semibold}>
+                          <Text
+                            style={{
+                              left: 4,
+                              top: -2,
+                              position: "relative",
+                              color: "white",
+                            }}
+                          >
+                            Followers
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={{ left: 50, position: "relative" }}>
+                    <View style={styles.bold}>
+                      <TouchableOpacity
+                        onPress={gotoFollowing}
+                        style={styles.followerBtn}
+                      >
+                        <Text
+                          style={{
+                            fontWeight: "bold",
+                            fontFamily: "sans-serif",
+                            color: "#111",
+                            fontSize: 20,
+                          }}
+                        >
+                          {profileData?.following?.length}
+                        </Text>
+                        <View style={styles.semibold}>
+                          <Text
+                            style={{
+                              left: 4,
+                              top: -2,
+                              position: "relative",
+                              color: "#111",
+                            }}
+                          >
+                            Following
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={{ left: 100, position: "relative" }}>
+                    <View style={styles.bold}>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          fontFamily: "sans-serif",
+                          color: "darkblue",
+                          fontSize: 20,
+                        }}
+                      >
+                        2
+                      </Text>
                     </View>
                     <View style={styles.semibold}>
-                      <Text>Actess & Musician</Text>
+                      <Text>Posts</Text>
                     </View>
                   </View>
                 </View>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  left: -50,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  position: "relative",
-                  margin: 10,
-                }}
-              >
-                <View>
-                  <View style={styles.bold}>
-                    <TouchableOpacity onPress={gotoFollowers} style={styles.followingBtn}>
-                    <Text
-                      style={{
-                        fontWeight: "bold",
-                        fontFamily: "sans-serif",
-                        color: "white",
-                        fontSize: 20,
-                      }}
-                    >
-                      {profileData?.followers?.length}
-                    </Text>
-                    <View style={styles.semibold}>
-                    <Text style={{left:4,top:-2,position:"relative",color:"white"}}>Followers</Text>
-                  </View>
-                    </TouchableOpacity>
-                  </View>
-                 
-                </View>
-                <View style={{ left: 50, position: "relative" }}>
-                  <View style={styles.bold}>
-                    <TouchableOpacity onPress={gotoFollowing} style={styles.followerBtn}>
-                    <Text
-                      style={{
-                        fontWeight: "bold",
-                        fontFamily: "sans-serif",
-                        color: "#111",
-                        fontSize: 20,
-                      }}
-                    >
-                      {profileData?.following?.length}
-                    </Text>
-                    <View style={styles.semibold}>
-                    <Text style={{left:4,top:-2,position:"relative",color:"#111"}}>Following</Text>
-                  </View>
-                    </TouchableOpacity>
-                  </View>
-                  
-                </View>
-                <View style={{ left: 100, position: "relative" }}>
-                  <View style={styles.bold}>
-                    <Text
-                      style={{
-                        fontWeight: "bold",
-                        fontFamily: "sans-serif",
-                        color: "darkblue",
-                        fontSize: 20,
-                      }}
-                    >
-                      2
-                    </Text>
-                  </View>
-                  <View style={styles.semibold}>
-                    <Text>Posts</Text>
-                  </View>
-                </View>
-              </View>
 
                 <View style={{ margin: 10 }}>
                   <Button title="Add Post" onPress={handleNavigation} />
@@ -368,7 +404,6 @@ const Profile = () => {
                 </View>
                 <View style={styles.line}></View>
 
-                
                 <View
                   style={{
                     flexDirection: "row",
@@ -396,8 +431,8 @@ const Profile = () => {
                       selectedTab === "Saved Posts" && styles.activeTab,
                     ]}
                     onPress={() => {
-                      handleTabChange("Saved Posts")
-                      fetchSavedPost()
+                      handleTabChange("Saved Posts");
+                      fetchSavedPost();
                     }}
                   >
                     <Text
@@ -410,9 +445,8 @@ const Profile = () => {
                   </TouchableOpacity>
                 </View>
 
-                
                 {selectedTab === "All Posts" ? (
-                  <View style={{top:15,position:'relative'}}>
+                  <View style={{ top: 15, position: "relative" }}>
                     {myPost?.length > 0 && (
                       <FlatList
                         data={myPost}
@@ -428,7 +462,7 @@ const Profile = () => {
                     )}
                   </View>
                 ) : (
-                  <View style={{top:15,position:'relative'}}>
+                  <View style={{ top: 15, position: "relative" }}>
                     {savedPost?.length > 0 && (
                       <FlatList
                         data={savedPost}
@@ -442,7 +476,6 @@ const Profile = () => {
                         }
                       />
                     )}
-                    
                   </View>
                 )}
               </View>
@@ -507,35 +540,32 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   activeTab: {
-    borderBottomColor:"#0E3D8B",
-    borderBottomWidth:2
+    borderBottomColor: "#0E3D8B",
+    borderBottomWidth: 2,
   },
   activeTabText: {
     color: "#111",
-    fontFamily:'sans-serif',
-    fontWeight:'bold'
+    fontFamily: "sans-serif",
+    fontWeight: "bold",
   },
-  followingBtn:{
-    padding:8,
-    backgroundColor:'#0FC1DE',
-    display:'flex',
-    justifyContent:"space-between",
-    flexDirection:'row',
-    borderRadius:10,
-    color:"white"
+  followingBtn: {
+    padding: 8,
+    backgroundColor: "#0FC1DE",
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    borderRadius: 10,
+    color: "white",
   },
-  followerBtn:{
-    padding:8,
-    backgroundColor:'whitesmoke',
-    display:'flex',
-    justifyContent:"space-between",
-    flexDirection:'row',
-    borderRadius:10,
-    color:"white"
-  }
+  followerBtn: {
+    padding: 8,
+    backgroundColor: "whitesmoke",
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    borderRadius: 10,
+    color: "white",
+  },
 });
 
 export default Profile;
-
-
-

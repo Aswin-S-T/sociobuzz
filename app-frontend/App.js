@@ -15,6 +15,8 @@ import Messaging from "./src/Screens/Messaging";
 import UploadScreen from "./src/Components/UploadScreen";
 import FollowersList from "./src/Screens/FollowersList";
 import FollowingList from "./src/Screens/FollowingList";
+import SettingsScreen from "./src/Screens/SettingsScreen";
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -208,6 +210,26 @@ export default function App() {
           component={FollowingList}
           options={{
             headerTitle: "Following",
+            headerStyle: {
+              backgroundColor: "#fff",
+              shadowColor: "rgba(0, 0, 0, 0.1)",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.8,
+              shadowRadius: 20,
+              elevation: 5,
+            },
+            headerTitleStyle: {
+              color: "#0E3D8B",
+              fontWeight: "bold",
+              fontFamily: "sans-serif",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            headerTitle: "Settings",
             headerStyle: {
               backgroundColor: "#fff",
               shadowColor: "rgba(0, 0, 0, 0.1)",
