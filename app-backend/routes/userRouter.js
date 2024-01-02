@@ -24,6 +24,7 @@ const {
   editProfile,
   savedPost,
   getFollowing,
+  listAllUsers,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -298,6 +299,12 @@ userRouter.get("/followers", async (req, res) => {
 
 userRouter.get("/following", async (req, res) => {
   getFollowing(req.query.userid, req.query.name).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.get("/list-all-users", async (req, res) => {
+  listAllUsers(req.query.key).then((response) => {
     res.send(response);
   });
 });

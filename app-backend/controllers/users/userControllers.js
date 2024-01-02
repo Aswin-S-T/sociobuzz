@@ -6,7 +6,7 @@ const Post = require("../../models/post/postSchema");
 const Messages = require("../../models/chat/messageModel");
 const Story = require("../../models/story/StorySchema");
 const JWT_SECRET = process.env.JWT_SECRET || "something secret";
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const newObjectId = new mongoose.Types.ObjectId();
 
 let successResponse = {
@@ -395,7 +395,7 @@ module.exports = {
       User.findOne({ _id: userId }, { following: 1 })
         .then((following) => {
           const followerArr =
-          following?.following?.map((item) => ({
+            following?.following?.map((item) => ({
               _id: item._id,
               username: item.username,
               profileImage: item.profileImage,
@@ -455,42 +455,59 @@ module.exports = {
       });
     });
   },
-  deletePost:(postId)=>{
-    return new Promise((resolve,reject)=>{
-      Post.deleteOne({_id : postId}).then(()=>{
-        resolve(successResponse)
-      })
-    })
+  deletePost: (postId) => {
+    return new Promise((resolve, reject) => {
+      Post.deleteOne({ _id: postId }).then(() => {
+        resolve(successResponse);
+      });
+    });
   },
-  editProfile:(userId,newData)=>{
-    return new Promise((resolve,reject)=>{
-      User.updateOne({_id : userId},newData).then((result)=>{
-        successResponse.message = 'Profile edited successfully'
-        resolve(successResponse)
-      })
-    })
+  editProfile: (userId, newData) => {
+    return new Promise((resolve, reject) => {
+      User.updateOne({ _id: userId }, newData).then((result) => {
+        successResponse.message = "Profile edited successfully";
+        resolve(successResponse);
+      });
+    });
   },
-  savedPost:(userId)=>{
-    return new Promise((resolve,reject)=>{
-      let savedPosts = []
-      User.findOne({_id : userId},{saved_post:1}).then((saved)=>{
-        if (saved.saved_post && saved.saved_post.length > 0){
-          let list = saved.saved_post
-          const objectIdList = list.map((id) => new mongoose.Types.ObjectId(id));
-          Post.find({ _id:{$in:objectIdList} },{imageType : 0,createdAt:0,updatedAt:0,'__v':0}).then((post)=>{
-           
+  savedPost: (userId) => {
+    return new Promise((resolve, reject) => {
+      let savedPosts = [];
+      User.findOne({ _id: userId }, { saved_post: 1 }).then((saved) => {
+        if (saved.saved_post && saved.saved_post.length > 0) {
+          let list = saved.saved_post;
+          const objectIdList = list.map(
+            (id) => new mongoose.Types.ObjectId(id)
+          );
+          Post.find(
+            { _id: { $in: objectIdList } },
+            { imageType: 0, createdAt: 0, updatedAt: 0, __v: 0 }
+          ).then((post) => {
             if (post && post.length > 0) {
-              console.log('POST----------->', post)
-              
-              resolve(post)
+              resolve(post);
             } else {
-             
-              resolve(savedPosts)
+              resolve(savedPosts);
             }
-          })
+          });
         }
-        
-      })
-    })
-  }
+      });
+    });
+  },
+  listAllUsers: (key) => {
+    return new Promise((resolve, reject) => {
+      User.find()
+        .select({ _id: 1, username: 1, profileImage: 1 })
+        .then((result) => {
+          if (result) {
+            let matchingUsers = result;
+            if (key) {
+              matchingUsers = matchingUsers.filter((user) =>
+                user.username.toLowerCase().startsWith(key.toLowerCase())
+              );
+            }
+            resolve(matchingUsers);
+          }
+        });
+    });
+  },
 };
