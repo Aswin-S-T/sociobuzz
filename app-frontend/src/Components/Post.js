@@ -7,7 +7,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableWithoutFeedback,
-  ToastAndroid
+  ToastAndroid,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -105,7 +106,7 @@ const Post = ({ newpost }) => {
   const [showEnlargedImage, setShowEnlargedImage] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const fetchData = async () => {
       const storedData = await AsyncStorage.getItem("userData");
 
@@ -123,7 +124,7 @@ const Post = ({ newpost }) => {
 
         setPost(modifiedData);
       }
-      setLoading(false);
+      // setLoading(false);
     };
     fetchData();
   }, []);
@@ -192,41 +193,35 @@ const Post = ({ newpost }) => {
       },
       body: JSON.stringify(saveData),
     });
-    if (response && response.ok){
-      showToastWithGravity()
+    if (response && response.ok) {
+      showToastWithGravity();
     }
   };
 
   return (
     <ScrollView>
-      {loading ? (
-        <Spinner
-          visible={loading}
-          textContent={"Loading..."}
-          textStyle={{ color: "#FFF" }}
-        />
-      ) : (
-        newpost && (
-          <View key={newpost._id} style={styles.postContainer}>
-            <View style={styles.postHeader}>
-              <TouchableOpacity
-                onPress={() => navigateToUserProfile(newpost?.userId)}
-              >
-                <Image source={{ uri: newpost?.image }} style={styles.avatar} />
-              </TouchableOpacity>
-              <Text style={styles.postComment}>{newpost?.caption}</Text>
-              <Text
-                style={{
-                  color: "#555",
-                  left: -20,
-                  position: "relative",
-                  fontFamily: "sans-serif",
-                  fontSize: 13,
-                }}
-              >
-                {formatTimeDifference(newpost?.time)}
-              </Text>
-              <TouchableOpacity onPress={handleOptionsPress}>
+      {newpost && (
+        <View key={newpost._id} style={styles.postContainer}>
+          <View style={styles.postHeader}>
+            <TouchableOpacity
+              onPress={() => navigateToUserProfile(newpost?.userId)}
+            >
+              <Image source={{ uri: newpost?.image }} style={styles.avatar} />
+            </TouchableOpacity>
+
+            <Text style={styles.postUsername}>{newpost?.username}</Text>
+            <Text
+              style={{
+                color: "#555",
+                left: -20,
+                position: "relative",
+                fontFamily: "sans-serif",
+                fontSize: 13,
+              }}
+            >
+              {formatTimeDifference(newpost?.time)}
+            </Text>
+            {/* <TouchableOpacity onPress={handleOptionsPress}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
                   size={24}
@@ -249,85 +244,82 @@ const Post = ({ newpost }) => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-              )}
-            </View>
-            <TouchableWithoutFeedback
+              )} */}
+          </View>
+          <Text style={styles.postComment}>{newpost?.caption}</Text>
+          <TouchableWithoutFeedback onPress={() => setShowEnlargedImage(true)}>
+            <Image
               onPress={() => setShowEnlargedImage(true)}
-            >
-              <Image
-                onPress={() => setShowEnlargedImage(true)}
-                source={{ uri: newpost?.image }}
-                style={styles.postImage}
-              />
-            </TouchableWithoutFeedback>
-            {showEnlargedImage && (
-              <EnlargedImageModal
-                visible={showEnlargedImage}
-                imageUrl={newpost?.image}
-                onClose={() => setShowEnlargedImage(false)}
-              />
-            )}
-
-            <View style={styles.postActions}>
-              <TouchableOpacity>
-                <View style={styles.actionContainer}>
-                  <TouchableOpacity onPress={() => likePost(newpost?._id)}>
-                    <View style={styles.actionContainer}>
-                      <MaterialCommunityIcons
-                        name={isLiked ? "heart" : "heart-outline"}
-                        size={24}
-                        color={isLiked ? "red" : "black"}
-                      />
-                      <Text>{likeCount}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleCommentsPress}>
-                <View style={styles.actionContainer}>
-                  <MaterialCommunityIcons
-                    name="comment-outline"
-                    size={24}
-                    color="black"
-                  />
-                  <Text>{newpost.comment.length}</Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => savePost(newpost?._id)}>
+              source={{ uri: newpost?.image }}
+              style={styles.postImage}
+            />
+          </TouchableWithoutFeedback>
+          {showEnlargedImage && (
+            <EnlargedImageModal
+              visible={showEnlargedImage}
+              imageUrl={newpost?.image}
+              onClose={() => setShowEnlargedImage(false)}
+            />
+          )}
+          <TouchableOpacity onPress={handleLikedUsersPress} style={{top:-25,position:'relative'}}>
+            <View style={{ margin: 10 }}>
+              <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
+                Liked by {newpost?.like?.length} peoples
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <View style={styles.postActions}>
+            <TouchableOpacity>
+              <View style={styles.actionContainer}>
+                <TouchableOpacity onPress={() => likePost(newpost?._id)}>
+                  <View style={styles.actionContainer}>
+                    <MaterialCommunityIcons
+                      name={isLiked ? "heart" : "heart-outline"}
+                      size={24}
+                      color={isLiked ? "red" : "black"}
+                    />
+                    <Text>{likeCount}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleCommentsPress}>
+              <View style={styles.actionContainer}>
                 <MaterialCommunityIcons
-                  name="bookmark-outline"
+                  name="comment-outline"
                   size={24}
                   color="black"
-                  backgroundColor={newpost?.saved ? "black" : "white"}
                 />
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity onPress={handleLikedUsersPress}>
-              <View style={{ margin: 10 }}>
-                <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
-                  Liked by {newpost?.like?.length} peoples
-                </Text>
+                <Text>{newpost.comment.length}</Text>
               </View>
             </TouchableOpacity>
 
-            {showLikedUsers && (
-              <LikedUsersPopup
-                postId={newpost?._id}
-                likedUsers={newpost.like}
-                onClose={() => setShowLikedUsers(false)}
+            <TouchableOpacity onPress={() => savePost(newpost?._id)}>
+              <MaterialCommunityIcons
+                name="bookmark-outline"
+                size={24}
+                color="black"
+                backgroundColor={newpost?.saved ? "black" : "white"}
               />
-            )}
-
-            {showComments && (
-              <CommentsPopup
-                postId={newpost?._id}
-                comments={newpost.comment}
-                onClose={() => setShowComments(false)}
-              />
-            )}
+            </TouchableOpacity>
           </View>
-        )
+
+          {showLikedUsers && (
+            <LikedUsersPopup
+              postId={newpost?._id}
+              likedUsers={newpost.like}
+              onClose={() => setShowLikedUsers(false)}
+            />
+          )}
+
+          {showComments && (
+            <CommentsPopup
+              postId={newpost?._id}
+              comments={newpost.comment}
+              onClose={() => setShowComments(false)}
+            />
+          )}
+        </View>
       )}
     </ScrollView>
   );
@@ -345,8 +337,8 @@ const styles = StyleSheet.create({
   postHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
-    borderBottomWidth: 1,
+    padding: 5,
+    borderBottomWidth: 0,
     borderBottomColor: "#ddd",
   },
   avatar: {
@@ -359,6 +351,21 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
     fontFamily: "sans-serif",
+    fontSize: 15,
+    margin: 8,
+    color: "#111",
+    left: 65,
+    top: -20,
+    position: "relative",
+  },
+  postUsername: {
+    flex: 1,
+    marginRight: 10,
+    fontFamily: "sans-serif",
+    fontWeight: "bold",
+    fontSize: 15,
+    margin: 8,
+    color: "#111",
   },
   dropdownOptions: {
     position: "absolute",
@@ -374,14 +381,19 @@ const styles = StyleSheet.create({
     elevation: 5,
     zIndex: 1000,
   },
+
   postImage: {
     width: "100%",
     height: 400,
+    top: -20,
+    position: "relative",
   },
   postActions: {
     flexDirection: "row",
     justifyContent: "space-around",
-    padding: 10,
+    padding: 5,
+    top:-35,
+    position:'relative'
   },
   actionContainer: {
     flexDirection: "row",
