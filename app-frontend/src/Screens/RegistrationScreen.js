@@ -9,9 +9,13 @@ import {
 } from "react-native";
 import AlertModal from "../Components/AlertModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BACKEND_URL } from "../Constants/Api";
 
-const LoginScreen = ({ navigation }) => {
+const RegistrationScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -19,27 +23,29 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
+      let userData = {
+        username,
+        firstName,
+        email,
+        phone,
+        password,
+      };
+
       setLoading(true);
-      const response = await fetch(
-        "https://sociobuzz.onrender.com/api/v1/user/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: username, password }),
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/api/v1/user/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
 
       const data = await response.json();
 
       if (data.success) {
-        console.log("Your data after login  : ", data?.data?._id);
-        await AsyncStorage.setItem("userData", JSON.stringify(data?.data?._id));
-        navigation.navigate("Crowdly", { userId: data.userId });
+        navigation.navigate("Login");
         setLoading(false);
       } else {
-        setModalMessage("Invalid email or password");
         setModalVisible(true);
         setLoading(false);
       }
@@ -52,8 +58,8 @@ const LoginScreen = ({ navigation }) => {
     setModalVisible(false);
   };
 
-  const doRegister = () => {
-    navigation.navigate("Register");
+  const doLogin = () => {
+    navigation.navigate("Login");
   };
 
   return (
@@ -86,17 +92,17 @@ const LoginScreen = ({ navigation }) => {
           <Text
             style={{
               color: "white",
-              fontSize: 40,
+              fontSize: 30,
               fontFamily: "sans-serif",
               alignItems: "center",
             }}
           >
-            Login Here
+            Create new Account
           </Text>
         </View>
       </View>
       <View style={{ marginTop: 40, margin: 40 }}>
-        <Text
+        {/* <Text
           style={{
             color: "#222",
             fontWeight: "bold",
@@ -105,10 +111,10 @@ const LoginScreen = ({ navigation }) => {
           }}
         >
           Username
-        </Text>
+        </Text> */}
         <TextInput
           style={{
-            top: 20,
+            top: 0,
             position: "relative",
             background: "transparent",
             border: "none",
@@ -122,8 +128,70 @@ const LoginScreen = ({ navigation }) => {
           value={username}
           onChangeText={(text) => setUsername(text)}
         />
-        <View style={{ marginTop: 40 }}>
-          <Text
+
+        {/* <Text
+          style={{
+            color: "#222",
+            fontWeight: "bold",
+            fontFamily: "sans-serif",
+            marginLeft: 9,
+          }}
+        >
+          Username
+        </Text> */}
+        <TextInput
+          style={{
+            top: 10,
+            position: "relative",
+            background: "transparent",
+            border: "none",
+            padding: 10,
+            outline: "none",
+            borderRadius: 20,
+            borderBottomWidth: 2,
+            borderBottomColor: "#0E3D8B",
+          }}
+          placeholder="First Name"
+          value={firstName}
+          onChangeText={(text) => setFirstName(text)}
+        />
+
+        <TextInput
+          style={{
+            top: 10,
+            position: "relative",
+            background: "transparent",
+            border: "none",
+            padding: 10,
+            outline: "none",
+            borderRadius: 20,
+            borderBottomWidth: 2,
+            borderBottomColor: "#0E3D8B",
+          }}
+          placeholder="Email"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+        />
+
+        <TextInput
+          style={{
+            top: 10,
+            position: "relative",
+            background: "transparent",
+            border: "none",
+            padding: 10,
+            outline: "none",
+            borderRadius: 20,
+            borderBottomWidth: 2,
+            borderBottomColor: "#0E3D8B",
+          }}
+          placeholder="Phone"
+          value={phone}
+          onChangeText={(text) => setPhone(text)}
+        />
+
+        {/* <View style={{ marginTop: 10 }}> */}
+        {/* <Text
             style={{
               color: "#222",
               fontFamily: "sans-serif",
@@ -132,25 +200,25 @@ const LoginScreen = ({ navigation }) => {
             }}
           >
             Password
-          </Text>
-          <TextInput
-            style={{
-              top: 20,
-              position: "relative",
-              background: "transparent",
-              border: "none",
-              padding: 10,
-              outline: "none",
-              borderRadius: 20,
-              borderBottomWidth: 2,
-              borderBottomColor: "#0E3D8B",
-            }}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-          />
-        </View>
+          </Text> */}
+        <TextInput
+          style={{
+            top: 10,
+            position: "relative",
+            background: "transparent",
+            border: "none",
+            padding: 10,
+            outline: "none",
+            borderRadius: 20,
+            borderBottomWidth: 2,
+            borderBottomColor: "#0E3D8B",
+          }}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+        />
+        {/* </View> */}
         <View style={{ marginTop: 20 }}>
           <TouchableOpacity
             style={{
@@ -178,7 +246,7 @@ const LoginScreen = ({ navigation }) => {
                 color: "#fff",
               }}
             >
-              {loading ? <>Please wait....</> : <>Login</>}
+              {loading ? <>Please wait....</> : <>Register</>}
             </Text>
           </TouchableOpacity>
           <AlertModal
@@ -194,12 +262,12 @@ const LoginScreen = ({ navigation }) => {
               alignItems: "center",
             }}
           >
-            <Text style={{ color: "#444", top: -10, position: "relative" }}>
+            {/* <Text style={{ color: "#444", top: -10, position: "relative" }}>
               Foregot password?
-            </Text>
+            </Text> */}
             <Text style={{ color: "#0E3D8B", fontWeight: "bold" }}>OR</Text>
             <TouchableOpacity
-              onPress={doRegister}
+              onPress={doLogin}
               style={{
                 borderRadius: 40,
                 backgroundColor: "gray",
@@ -222,7 +290,7 @@ const LoginScreen = ({ navigation }) => {
                   color: "#fff",
                 }}
               >
-                Create new Account
+                Login
               </Text>
             </TouchableOpacity>
           </View>
@@ -232,4 +300,4 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-export default LoginScreen;
+export default RegistrationScreen;

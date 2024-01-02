@@ -31,6 +31,7 @@ import AboutUsPage from "./src/Pages/AboutUsPage";
 import EditProfilePage from "./src/Pages/EditProfilePage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BACKEND_URL } from "./src/Constants/Api";
+import RegistrationScreen from "./src/Screens/RegistrationScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -97,8 +98,8 @@ export default function App() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <NavigationContainer>
-        {/* <Stack.Navigator initialRouteName="Login"> */}
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName="Login">
+        {/* <Stack.Navigator> */}
           <Stack.Screen
             name="Crowdly"
             component={HomeScreen}
@@ -338,6 +339,26 @@ export default function App() {
               headerTitle: "About Us",
               headerStyle: {
                 backgroundColor: "#fff",
+                shadowColor: "rgba(0, 0, 0, 0.1)",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.8,
+                shadowRadius: 20,
+                elevation: 5,
+              },
+              headerTitleStyle: {
+                color: "#0E3D8B",
+                fontWeight: "bold",
+                fontFamily: "sans-serif",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={RegistrationScreen}
+            options={{
+              headerTitle: "Register",
+              headerStyle: {
+                backgroundColor: "#0E3D8B",
                 shadowColor: "rgba(0, 0, 0, 0.1)",
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.8,
