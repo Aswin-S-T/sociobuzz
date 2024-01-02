@@ -64,6 +64,7 @@ const UsersListScreen = () => {
         />
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={{fontSize:18,fontFamily:'sans-serif',fontWeight:'bold',color:"#222"}}>People you may know</Text>
           {users && users?.length > 0 ? (
             <View style={styles.userList}>
               {users.map((user, index) => (
@@ -139,6 +140,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    top:15,
+    position:'relative'
   },
   cardContainer: {
     width: "48%",
