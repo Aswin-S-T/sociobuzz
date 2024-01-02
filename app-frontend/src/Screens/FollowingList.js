@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  ToastAndroid,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { BACKEND_URL } from "../Constants/Api";
@@ -43,6 +44,32 @@ const FollowingList = () => {
   useEffect(() => {
     fetchUser();
   }, []);
+
+  const unfollowUser = async (targetId) => {
+    let url = `${BACKEND_URL}/api/v1/user/unfollow`;
+    let data = {
+      userId: uid,
+      targetId,
+    };
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (response.ok) {
+      ToastAndroid.showWithGravity(
+        "Unfollowed",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
+      setFollowers((prevFollowers) =>
+        prevFollowers.filter((follower) => follower._id !== targetId)
+      );
+    }
+  };
+
   return (
     <View style={{ padding: 20 }}>
       <View style={styles.sameRow}>
@@ -69,7 +96,7 @@ const FollowingList = () => {
           Following ({followers?.length})
         </Text>
         {followers.length > 0 ? (
-          <View style={{ top: 20, position: "relative" ,marginBottom:35}}>
+          <View style={{ top: 20, position: "relative", marginBottom: 35 }}>
             <FlatList
               data={followers}
               keyExtractor={(item) => item._id}
@@ -85,7 +112,10 @@ const FollowingList = () => {
                   >
                     <Text style={styles.username}>{item.username}</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.unFOllowBtn}>
+                  <TouchableOpacity
+                    style={styles.unFOllowBtn}
+                    onPress={() => unfollowUser(item?._id)}
+                  >
                     <Text style={{ color: "white", fontFamily: "sans-serif" }}>
                       Unfollow
                     </Text>
