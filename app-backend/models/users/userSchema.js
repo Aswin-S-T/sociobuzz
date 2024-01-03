@@ -27,6 +27,8 @@ const userSchema = new mongoose.Schema(
     bio: { type: String },
     saved_post: [],
     chat_users: [],
+    otp: { type: String },
+    otpExpiration: { type: String },
   },
   {
     timestamps: true,
