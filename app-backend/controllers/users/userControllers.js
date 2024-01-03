@@ -546,4 +546,23 @@ module.exports = {
         });
     });
   },
+  changePassword: (email, newpassword) => {
+    return new Promise((resolve, reject) => {
+      User.findOne({ email }).then(async (user) => {
+        if (user) {
+          let hashedPassword = await bcrypt.hash(newpassword, 10);
+          await User.updateOne(
+            { email },
+            { $set: { password: hashedPassword } }
+          ).then(() => {
+            successResponse.message = "Password updated";
+            resolve(successResponse);
+          });
+        } else {
+          errorResponse.message = "No user found with this email";
+          resolve(errorResponse);
+        }
+      });
+    });
+  },
 };

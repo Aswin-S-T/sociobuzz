@@ -27,6 +27,7 @@ const {
   listAllUsers,
   foregotPassword,
   verifyOTP,
+  changePassword,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -62,6 +63,12 @@ userRouter.post("/foregot-password", async (req, res) => {
 
 userRouter.post("/verify-otp", async (req, res) => {
   verifyOTP(req.body.email, req.body.otp).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.post("/change-password", async (req, res) => {
+  changePassword(req.body.email, req.body.newpassword).then((response) => {
     res.send(response);
   });
 });
