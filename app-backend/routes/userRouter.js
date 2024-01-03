@@ -25,6 +25,8 @@ const {
   savedPost,
   getFollowing,
   listAllUsers,
+  foregotPassword,
+  verifyOTP,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -46,10 +48,20 @@ userRouter.post("/register", async (req, res) => {
 });
 
 userRouter.post("/login", async (req, res) => {
-  console.log("APi called*************");
   const data = req.body;
-  console.log("Datat from body : ", data);
   login(data).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.post("/foregot-password", async (req, res) => {
+  foregotPassword(req.body.email).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.post("/verify-otp", async (req, res) => {
+  verifyOTP(req.body.email, req.body.otp).then((response) => {
     res.send(response);
   });
 });

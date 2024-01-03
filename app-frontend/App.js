@@ -172,9 +172,9 @@ export default function App() {
             name="Login"
             component={LoginScreen}
             options={{
-              headerTitle: "Login   Here",
+              headerTitle: "Login",
               headerStyle: {
-                backgroundColor: "#0E3D8B",
+                backgroundColor: "#fff",
                 shadowColor: "rgba(0, 0, 0, 0.1)",
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.8,
