@@ -21,7 +21,9 @@ const Landing = () => {
       try {
         setLoading(true);
         const storedData = await AsyncStorage.getItem("userData");
-
+        if (storedData) {
+          setUid(storedData)
+        }
         let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
 
         const response = await fetch(url);

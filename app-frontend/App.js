@@ -31,6 +31,7 @@ import AboutUsPage from "./src/Pages/AboutUsPage";
 import EditProfilePage from "./src/Pages/EditProfilePage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BACKEND_URL } from "./src/Constants/Api";
+import RegistrationScreen from "./src/Screens/RegistrationScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -39,6 +40,7 @@ export default function App() {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [users, setUsers] = useState([]);
   const [uid, setUid] = useState("");
+  const [loggedIn, setLoggedIn] = useState(true);
 
   const sampleUsers = [
     { id: 1, username: "john_doe" },
@@ -53,9 +55,22 @@ export default function App() {
     setIsSearchVisible((prev) => !prev);
   };
 
+  useEffect(() => {
+    const initial = async () => {
+      const storedData = await AsyncStorage.getItem("userData");
+      if (storedData && storedData.trim() !== "") {
+        setLoggedIn(true);
+      } else {
+        setLoggedIn(false);
+      }
+    };
+    initial();
+  }, []);
+
   const fetchUser = async (value) => {
     let url = null;
     const storedData = await AsyncStorage.getItem("userData");
+
     if (storedData) {
       setUid(storedData);
     }
@@ -97,8 +112,10 @@ export default function App() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <NavigationContainer>
-        {/* <Stack.Navigator initialRouteName="Login"> */}
-        <Stack.Navigator>
+        <Stack.Navigator
+          initialRouteName={loggedIn == true ? "Crowdly" : "Login"}
+        >
+          {/* <Stack.Navigator> */}
           <Stack.Screen
             name="Crowdly"
             component={HomeScreen}
@@ -338,6 +355,26 @@ export default function App() {
               headerTitle: "About Us",
               headerStyle: {
                 backgroundColor: "#fff",
+                shadowColor: "rgba(0, 0, 0, 0.1)",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.8,
+                shadowRadius: 20,
+                elevation: 5,
+              },
+              headerTitleStyle: {
+                color: "#0E3D8B",
+                fontWeight: "bold",
+                fontFamily: "sans-serif",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={RegistrationScreen}
+            options={{
+              headerTitle: "Register",
+              headerStyle: {
+                backgroundColor: "#0E3D8B",
                 shadowColor: "rgba(0, 0, 0, 0.1)",
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.8,
