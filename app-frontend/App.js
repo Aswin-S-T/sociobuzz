@@ -40,7 +40,7 @@ export default function App() {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [users, setUsers] = useState([]);
   const [uid, setUid] = useState("");
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const sampleUsers = [
     { id: 1, username: "john_doe" },
