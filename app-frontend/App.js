@@ -43,12 +43,6 @@ export default function App() {
   const [uid, setUid] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const sampleUsers = [
-    { id: 1, username: "john_doe" },
-    { id: 2, username: "jane_doe" },
-    // Add more sample users as needed
-  ];
-
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
 
@@ -434,7 +428,7 @@ export default function App() {
           <View style={styles.searchBox}>
             {/* <ScrollView style={{ height: 400 }}> */}
             <FlatList
-              style={{ height: 400 }}
+              // style={{ height: 400 }}
               data={filteredUsers}
               keyExtractor={(item) => item?._id.toString()}
               renderItem={({ item }) => (
