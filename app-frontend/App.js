@@ -40,6 +40,7 @@ export default function App() {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [users, setUsers] = useState([]);
   const [uid, setUid] = useState("");
+  const [loggedIn, setLoggedIn] = useState(true);
 
   const sampleUsers = [
     { id: 1, username: "john_doe" },
@@ -54,9 +55,22 @@ export default function App() {
     setIsSearchVisible((prev) => !prev);
   };
 
+  useEffect(() => {
+    const initial = async () => {
+      const storedData = await AsyncStorage.getItem("userData");
+      if (storedData && storedData.trim() !== "") {
+        setLoggedIn(true);
+      } else {
+        setLoggedIn(false);
+      }
+    };
+    initial();
+  }, []);
+
   const fetchUser = async (value) => {
     let url = null;
     const storedData = await AsyncStorage.getItem("userData");
+
     if (storedData) {
       setUid(storedData);
     }
@@ -98,8 +112,10 @@ export default function App() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
-        {/* <Stack.Navigator> */}
+        <Stack.Navigator
+          initialRouteName={loggedIn == true ? "Crowdly" : "Login"}
+        >
+          {/* <Stack.Navigator> */}
           <Stack.Screen
             name="Crowdly"
             component={HomeScreen}

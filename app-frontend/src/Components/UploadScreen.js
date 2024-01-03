@@ -21,10 +21,8 @@ const UploadScreen = ({ route }) => {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [uid, setUid] = useState("637360dbc8559f2ffa05acd5");
+  const [uid, setUid] = useState(route?.params?.id);
   const [caption, setCaption] = useState(null);
-
-  console.log("PARAMS PASSED FROM PROFILE------------", route?.params);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -69,12 +67,12 @@ const UploadScreen = ({ route }) => {
 
       const apiUrl = "https://sociobuzz.onrender.com/api/v1/user/add-post";
       //const apiUrl = 'http://192.168.214.245:5000/api/v1/user/add-post'
-      const userId = "637360dbc8559f2ffa05acd5";
+      const userId = route?.id;
       const imageType = "jpg";
       const about = "About your post";
 
       const postData = {
-        userId,
+        userId: uid,
         caption,
         image: downloadURL,
         imageType,

@@ -40,8 +40,6 @@ const Profile = () => {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result?.assets[0]?.uri);
     }
@@ -71,7 +69,7 @@ const Profile = () => {
 
       const apiUrl = "https://sociobuzz.onrender.com/api/v1/user/add-post";
       //const apiUrl = 'http://192.168.214.245:5000/api/v1/user/add-post'
-      const userId = "637360dbc8559f2ffa05acd5";
+      const userId = uid;
       const caption = "Add your caption here";
       const imageType = "jpg";
       const about = "About your post";
@@ -108,10 +106,21 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    const initial = async () => {
+      const storedData = await AsyncStorage.getItem("userData");
+      if (storedData) {
+        setUid(storedData);
+      }
+    };
+    initial();
+  }, []);
+
+  useEffect(() => {
     const fetchPost = async () => {
-      let uid = "637360dbc8559f2ffa05acd5";
-      setUid(uid);
-      let url = `${BACKEND_URL}/api/v1/user/my-post/${uid}`;
+      const storedData = await AsyncStorage.getItem("userData");
+
+      const cleanUid = storedData.replace(/["']/g, "");
+      let url = `${BACKEND_URL}/api/v1/user/my-post/${cleanUid}`;
 
       const response = await fetch(url);
       const data = await response?.json();
@@ -128,15 +137,18 @@ const Profile = () => {
       setLoading(true);
       const storedData = await AsyncStorage.getItem("userData");
 
-      let uid = "637360dbc8559f2ffa05acd5";
-      let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
+      const cleanUid = storedData.replace(/["']/g, "");
 
-      const response = await fetch(url);
-      const data = await response?.json();
+      if (storedData) {
+        let url = `https://sociobuzz.onrender.com/api/v1/user/details/${cleanUid}`;
 
-      if (data && data?.data) {
-        setProfileData(data?.data);
-        setLoading(false);
+        const response = await fetch(url);
+        const data = await response?.json();
+
+        if (data && data?.data) {
+          setProfileData(data?.data);
+          setLoading(false);
+        }
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -152,8 +164,9 @@ const Profile = () => {
   };
 
   const handleNavigation = () => {
+    const cleanUid = uid?.replace(/["']/g, "");
     navigation.navigate("Upload", {
-      id: uid,
+      id: cleanUid,
     });
   };
   const gotoFollowers = () => {
@@ -333,7 +346,7 @@ const Profile = () => {
                           fontSize: 20,
                         }}
                       >
-                        2
+                        {myPost?.length}
                       </Text>
                     </View>
                     <View style={styles.semibold}>
