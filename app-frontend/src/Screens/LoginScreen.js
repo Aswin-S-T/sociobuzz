@@ -59,6 +59,10 @@ const LoginScreen = ({ navigation }) => {
     navigation.navigate("Register");
   };
 
+  const goForgotpassword = () => {
+    navigation.navigate("Foregotpassword");
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -225,9 +229,11 @@ const LoginScreen = ({ navigation }) => {
                 alignItems: "center",
               }}
             >
-              <Text style={{ color: "#444", top: -10, position: "relative" }}>
-                Foregot password?
-              </Text>
+              <TouchableOpacity onPress={goForgotpassword}>
+                <Text style={{ color: "#444", top: -10, position: "relative" }}>
+                  Foregot password?
+                </Text>
+              </TouchableOpacity>
               <Text style={{ color: "#0E3D8B", fontWeight: "bold" }}>OR</Text>
               <TouchableOpacity
                 onPress={doRegister}
