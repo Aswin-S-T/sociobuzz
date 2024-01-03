@@ -127,7 +127,7 @@ const LoginScreen = ({ navigation }) => {
               marginLeft: 9,
             }}
           >
-            Username
+            Email
           </Text>
           <TextInput
             style={{
