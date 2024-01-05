@@ -1,7 +1,10 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/users/userSchema");
-const { sendNotification } = require("../../utils/utils");
+const {
+  sendNotification,
+  sendEmailNotification,
+} = require("../../utils/utils");
 const Post = require("../../models/post/postSchema");
 const Messages = require("../../models/chat/messageModel");
 const Story = require("../../models/story/StorySchema");
@@ -67,10 +70,6 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       const { email, password } = userData;
 
-      // if (!(email && password)) {
-      // 	res.status(400).send("All input is required");
-      // }
-
       const user = await User.findOne({ email });
 
       if (user && (await bcrypt.compare(password, user.password))) {
@@ -84,6 +83,43 @@ module.exports = {
         resolve(successResponse);
       }
       resolve(errorResponse);
+    });
+  },
+  foregotPassword: (email) => {
+    return new Promise((resolve, reject) => {
+      User.findOne({ email }).then((user) => {
+        if (user) {
+          const otp = Math.floor(1000 + Math.random() * 9000);
+          user.otp = otp;
+          user.otpExpiration = Date.now() + 600000;
+          User.updateOne(
+            { email },
+            { $set: { otpExpiration: user.otpExpiration, otp } }
+          ).then(() => {
+            sendEmailNotification(
+              email,
+              "Password Reset OTP",
+              `Your OTP for password reset is: ${otp}`
+            );
+            successResponse.message = "OTP send";
+            resolve(successResponse);
+          });
+        } else {
+          resolve(errorResponse);
+        }
+      });
+    });
+  },
+  verifyOTP: (email, otp) => {
+    return new Promise((resolve, reject) => {
+      User.findOne({ email }).then((user) => {
+        if (!user || user.otp !== otp || Date.now() > user.otpExpiration) {
+          errorResponse.message = "Invalid OTP";
+          resolve(errorResponse);
+        } else {
+          resolve(successResponse);
+        }
+      });
     });
   },
   getDetails: (userId) => {
@@ -163,16 +199,25 @@ module.exports = {
           if (posts) {
             const userIds = posts.map((post) => post.userId);
             await User.find({ _id: { $in: userIds } }).then((users) => {
-              const userIdToUsername = {};
+              const userIdToUser = {};
               users.forEach((user) => {
-                userIdToUsername[user._id] = user.username;
+                userIdToUser[user._id] = user;
               });
+
               const postsWithUsername = posts.map((post) => {
+                const user = userIdToUser[post.userId];
+                const following = user?.following || [];
+                const isFollowing = following.some((follower) =>
+                  follower._id.equals(post.userId)
+                );
+
                 return {
                   ...post["_doc"],
-                  username: userIdToUsername[post.userId],
+                  username: user?.username,
+                  following: isFollowing,
                 };
               });
+
               successResponse.data = postsWithUsername;
               resolve(successResponse);
             });
@@ -508,6 +553,25 @@ module.exports = {
             resolve(matchingUsers);
           }
         });
+    });
+  },
+  changePassword: (email, newpassword) => {
+    return new Promise((resolve, reject) => {
+      User.findOne({ email }).then(async (user) => {
+        if (user) {
+          let hashedPassword = await bcrypt.hash(newpassword, 10);
+          await User.updateOne(
+            { email },
+            { $set: { password: hashedPassword } }
+          ).then(() => {
+            successResponse.message = "Password updated";
+            resolve(successResponse);
+          });
+        } else {
+          errorResponse.message = "No user found with this email";
+          resolve(errorResponse);
+        }
+      });
     });
   },
 };
