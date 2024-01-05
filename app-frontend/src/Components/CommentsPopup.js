@@ -73,7 +73,8 @@ const CommentsPopup = ({ postId, comments, onClose }) => {
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Comments</Text>
-          <ScrollView>
+
+          {comments && comments?.length > 0 && (
             <FlatList
               data={comments}
               keyExtractor={(item, index) => index.toString()}
@@ -108,7 +109,8 @@ const CommentsPopup = ({ postId, comments, onClose }) => {
               )}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
-          </ScrollView>
+          )}
+
           <View
             style={{
               display: "flex",
@@ -122,11 +124,8 @@ const CommentsPopup = ({ postId, comments, onClose }) => {
               style={{
                 top: 20,
                 position: "relative",
-                background: "transparent",
                 width: "100%",
-                border: "none",
                 padding: 10,
-                outline: "none",
                 borderRadius: 20,
                 borderBottomWidth: 1,
                 borderBottomColor: "grey",

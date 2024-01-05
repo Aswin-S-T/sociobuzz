@@ -34,6 +34,7 @@ import { BACKEND_URL } from "./src/Constants/Api";
 import RegistrationScreen from "./src/Screens/RegistrationScreen";
 import ForegotPassword from "./src/Screens/ForegotPassword";
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -110,7 +111,7 @@ export default function App() {
         <Stack.Navigator
           initialRouteName={loggedIn == true ? "Crowdly" : "Login"}
         >
-          {/* <Stack.Navigator> */}
+          {/* <Stack.Navigator initialRouteName="Crowdly"> */}
           <Stack.Screen
             name="Crowdly"
             component={HomeScreen}

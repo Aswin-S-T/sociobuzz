@@ -9,6 +9,8 @@ import {
   TouchableWithoutFeedback,
   ToastAndroid,
   ActivityIndicator,
+  Button,
+  Dimensions,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -19,6 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import EnlargedImageModal from "./EnlargedImageModal";
 import { useNavigation } from "@react-navigation/native";
 import { Entypo } from "@expo/vector-icons";
+import { Video, ResizeMode } from "expo-av";
 
 const Post = ({ newpost }) => {
   const navigation = useNavigation();
@@ -32,6 +35,9 @@ const Post = ({ newpost }) => {
   const [isSaved, setIsSaved] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [savedList, setSavedList] = useState([]);
+  const [sent, setSent] = useState(false);
+  const video = React.useRef(null);
+  const [status, setStatus] = React.useState({});
 
   const formatTimeDifference = (time) => {
     const currentTime = new Date();
@@ -55,12 +61,16 @@ const Post = ({ newpost }) => {
     }
   };
 
+  const windowWidth = Dimensions.get("window").width;
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
         const storedData = await AsyncStorage.getItem("userData");
-
+        if (storedData) {
+          setUid(storedData);
+        }
         let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
 
         const response = await fetch(url);
@@ -198,6 +208,30 @@ const Post = ({ newpost }) => {
     }
   };
 
+  const sendRequest = async (userId) => {
+    let followData = { toId: userId, fromId: uid };
+
+    setSent(true);
+
+    const response = await fetch(
+      "https://sociobuzz.onrender.com/api/v1/user/follow",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(followData),
+      }
+    );
+
+    const data = await response.json();
+    ToastAndroid.showWithGravity(
+      "You are following",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  };
+
   return (
     <ScrollView>
       {newpost && (
@@ -221,39 +255,47 @@ const Post = ({ newpost }) => {
             >
               {formatTimeDifference(newpost?.time)}
             </Text>
-            {/* <TouchableOpacity onPress={handleOptionsPress}>
-                <MaterialCommunityIcons
-                  name="dots-vertical"
-                  size={24}
-                  color="black"
-                />
-              </TouchableOpacity>
 
-              {showOptions && (
-                <View style={styles.dropdownOptions}>
-                  <TouchableOpacity onPress={handleDeletePress}>
-                    <Text>
-                      <Entypo name="block" size={20} color="black" /> Not
-                      Interested
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={handleDeletePress}>
-                    <Text>
-                      <Entypo name="block" size={20} color="black" /> Not
-                      Interested
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )} */}
+            {newpost?.following == false && (
+              <TouchableOpacity
+                style={styles.followBtn}
+                onPress={() => sendRequest(newpost?._id)}
+              >
+                <Text style={{ color: "white" }}>Follow+</Text>
+              </TouchableOpacity>
+            )}
           </View>
           <Text style={styles.postComment}>{newpost?.caption}</Text>
-          <TouchableWithoutFeedback onPress={() => setShowEnlargedImage(true)}>
-            <Image
+
+          {newpost.imageType == "Video" ? (
+            <View style={{ backgroundColor: "black" }}>
+              <Video
+                ref={video}
+                style={{
+                  width: "100%",
+                  height: windowWidth,
+                }}
+                source={{
+                  uri: newpost?.image,
+                }}
+                useNativeControls
+                resizeMode={ResizeMode.CONTAIN}
+                isLooping
+                onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+              />
+            </View>
+          ) : (
+            <TouchableWithoutFeedback
               onPress={() => setShowEnlargedImage(true)}
-              source={{ uri: newpost?.image }}
-              style={styles.postImage}
-            />
-          </TouchableWithoutFeedback>
+            >
+              <Image
+                onPress={() => setShowEnlargedImage(true)}
+                source={{ uri: newpost?.image }}
+                style={styles.postImage}
+              />
+            </TouchableWithoutFeedback>
+          )}
+
           {showEnlargedImage && (
             <EnlargedImageModal
               visible={showEnlargedImage}
@@ -261,7 +303,10 @@ const Post = ({ newpost }) => {
               onClose={() => setShowEnlargedImage(false)}
             />
           )}
-          <TouchableOpacity onPress={handleLikedUsersPress} style={{top:-25,position:'relative'}}>
+          <TouchableOpacity
+            onPress={handleLikedUsersPress}
+            style={{ top: -25, position: "relative" }}
+          >
             <View style={{ margin: 10 }}>
               <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
                 Liked by {newpost?.like?.length} peoples
@@ -392,13 +437,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 5,
-    top:-35,
-    position:'relative'
+    top: -35,
+    position: "relative",
   },
   actionContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
+  followBtn: {
+    padding: 8,
+    backgroundColor: "darkcyan",
+    color: "white",
+    borderRadius: 10,
+    // minWidth: 80,
+  },
+  video: {
+    width: "100%",
+    height: 500,
+  },
 });
 
-export default Post;
+// export default Post;
+export default React.memo(Post);

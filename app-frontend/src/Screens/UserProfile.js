@@ -28,6 +28,7 @@ const UserProfile = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [sent, setSent] = useState(false);
   const [uid, setUid] = useState("");
+  const [requestSentMap,setRequestSentMap] = useState([])
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -75,10 +76,10 @@ const UserProfile = () => {
   const sendRequest = async () => {
     let followData = { toId: userId, fromId: uid };
     setSent(true);
-    setRequestSentMap((prevMap) => ({
-      ...prevMap,
-      [toId]: true,
-    }));
+    // setRequestSentMap((prevMap) => ({
+    //   ...prevMap,
+    //   [toId]: true,
+    // }));
     const response = await fetch(
       "https://sociobuzz.onrender.com/api/v1/user/follow",
       {

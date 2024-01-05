@@ -22,7 +22,7 @@ const Landing = () => {
         setLoading(true);
         const storedData = await AsyncStorage.getItem("userData");
         if (storedData) {
-          setUid(storedData)
+          setUid(storedData);
         }
         let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
 
@@ -50,9 +50,10 @@ const Landing = () => {
   const fetchData = async () => {
     setLoading(true);
     const response = await fetch(
-      "https://crowdly-2.onrender.com/api/v1/user/all-post"
+      "https://sociobuzz.onrender.com/api/v1/user/all-post"
     );
     const data = await response?.json();
+    
     const modifiedData = data?.data.map((post) => ({
       ...post,
       saved: savedList.includes(post._id),
