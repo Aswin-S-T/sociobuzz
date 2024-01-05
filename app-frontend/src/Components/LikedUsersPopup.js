@@ -31,13 +31,13 @@ const formatTimeDifference = (time) => {
   }
 };
 
-const LikedUsersPopup = ({ postId,likedUsers, onClose }) => {
+const LikedUsersPopup = ({ postId, likedUsers, onClose }) => {
   return (
     <Modal transparent={true} animationType="slide" visible={true}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Liked Users</Text>
-          <ScrollView>
+
           <FlatList
             data={likedUsers}
             keyExtractor={(item, index) => index.toString()}
@@ -51,7 +51,7 @@ const LikedUsersPopup = ({ postId,likedUsers, onClose }) => {
             )}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
-          </ScrollView>
+
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "90%",
     maxHeight: "80%",
-    height:500
+    height: 500,
   },
   modalTitle: {
     fontSize: 18,

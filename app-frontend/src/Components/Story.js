@@ -129,7 +129,6 @@ const Story = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          {console.log("SELECTED STORY----------", selectedStory)}
           <Image
             source={{ uri: selectedStory }}
             style={styles.selectedStoryImage}
