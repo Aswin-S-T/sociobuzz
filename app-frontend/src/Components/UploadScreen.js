@@ -21,6 +21,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { Video, ResizeMode } from "expo-av";
 import * as DocumentPicker from "expo-document-picker";
 import * as ExpoCrypto from "expo-crypto";
+import { Entypo } from "@expo/vector-icons";
 
 const UploadScreen = ({ route }) => {
   const [image, setImage] = useState(null);
@@ -31,6 +32,7 @@ const UploadScreen = ({ route }) => {
   const [video, setVideo] = useState(null);
   const [vUri, setvUri] = useState("");
   const [status, setStatus] = useState({});
+  const [postType, setPostType] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -43,6 +45,7 @@ const UploadScreen = ({ route }) => {
   }, []);
 
   const pickImage = async () => {
+    setPostType("image");
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -50,7 +53,6 @@ const UploadScreen = ({ route }) => {
       quality: 1,
     });
 
-    console.log(result);
     setUploading(false);
     if (!result.canceled) {
       setImage(result.uri);
@@ -58,6 +60,7 @@ const UploadScreen = ({ route }) => {
   };
 
   const pickVedio = async () => {
+    setPostType("video");
     let result = await DocumentPicker.getDocumentAsync({
       type: "video/*",
     });
@@ -85,7 +88,7 @@ const UploadScreen = ({ route }) => {
         xhr.send(null);
       });
       const randomBytes = await getRandomBytes(16);
-      console.log("RANDOM BYTES---------", randomBytes);
+
       const imageName = `Pictures/Image_${uuidv4({
         random: [...randomBytes],
       })}`;
@@ -94,14 +97,11 @@ const UploadScreen = ({ route }) => {
       const snapshot = await ref.put(blob);
 
       const downloadURL = await snapshot.ref.getDownloadURL();
-      console.log("Download URL: ", downloadURL);
 
       const apiUrl = "https://sociobuzz.onrender.com/api/v1/user/add-post";
-      console.log("API URL==========", apiUrl);
-      //const apiUrl = 'http://192.168.214.245:5000/api/v1/user/add-post'
-      console.log("Route----------", route ? route : "no route");
+
       const userId = route?.id;
-      console.log("USER I------------", userId);
+
       const imageType = "jpg";
       const about = "About your post";
 
@@ -124,7 +124,11 @@ const UploadScreen = ({ route }) => {
       const responseData = await response.json();
 
       if (responseData.status === 200) {
-        console.log("Post uploaded successfully!");
+        ToastAndroid.showWithGravity(
+          "Your post added",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
       } else {
         console.error("Error uploading post:", responseData);
       }
@@ -140,9 +144,8 @@ const UploadScreen = ({ route }) => {
   };
 
   const uploadVideo = async () => {
-    console.log("BUTTON CLIEKC FOR VEDIO");
     try {
-      // setLoading(true);
+      setLoading(true);
 
       const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -157,8 +160,6 @@ const UploadScreen = ({ route }) => {
         xhr.send(null);
       });
 
-      console.log("BLOB----------", blob);
-
       const randomBytes = await ExpoCrypto.getRandomBytes(16); // await getRandomBytes(16);
       const videoName = `Videos/Video_${uuidv4({
         random: [...randomBytes],
@@ -168,12 +169,11 @@ const UploadScreen = ({ route }) => {
       const snapshot = await ref.put(blob);
 
       const downloadURL = await snapshot.ref.getDownloadURL();
-      console.log("Download URL: ", downloadURL);
 
       const apiUrl = "https://sociobuzz.onrender.com/api/v1/user/add-post";
-      // const apiUrl = 'http://192.168.214.245:5000/api/v1/user/add-post'
+
       const userId = route?.id;
-      const videoType = "mp4"; // Change this to the actual video type
+      const videoType = "mp4";
       const about = "About your post";
 
       const postData = {
@@ -183,7 +183,7 @@ const UploadScreen = ({ route }) => {
         imageType: "Video",
         about,
       };
-      console.log("POST DATA----------", postData);
+
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -195,18 +195,18 @@ const UploadScreen = ({ route }) => {
       const responseData = await response.json();
 
       if (responseData.status === 200) {
-        console.log("Video uploaded successfully!");
         ToastAndroid.showWithGravity(
           "Your post added",
           ToastAndroid.SHORT,
           ToastAndroid.CENTER
         );
+        setPostType("image");
       } else {
         console.error("Error uploading video:", responseData);
       }
 
       setLoading(false);
-      // setVideo(downloadURL);
+
       blob.close();
     } catch (error) {
       console.error("Upload error:", error);
@@ -217,23 +217,23 @@ const UploadScreen = ({ route }) => {
   return (
     <ScrollView>
       <View style={{ top: 50, position: "relative" }}>
-        <TouchableOpacity
-          onPress={pickImage}
+        <View
           style={{
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            justifyContent: "space-around",
+            flexDirection: "row",
           }}
         >
-          <Icon name="camera" size={40} color="grey" />
-          <Text>Select Image</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={pickVedio}
-          style={{ backgroundColor: "red", padding: 8 }}
-        >
-          <Text>Select vedio</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={pickImage}>
+            <Icon name="camera" size={40} color="grey" />
+            <Text>Select Image</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={pickVedio}>
+            <Entypo name="video" size={40} color="violet" />
+            <Text>Select vedio</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={{ margin: 20 }}>
           {image && (
             <Image
@@ -270,98 +270,35 @@ const UploadScreen = ({ route }) => {
               <></>
             )}
           </View>
-          {/* {videoUri && (
-          <>
-            <Video
-              source={{ uri: videoUri }}
-              style={{ width: 200, height: 200 }}
-              controls={true}
-            />
-            <TextInput
-              style={{
-                top: 20,
-                position: "relative",
-                background: "transparent",
-                border: "none",
-                padding: 10,
-                outline: "none",
-                borderRadius: 20,
-                borderBottomWidth: 2,
-                borderBottomColor: "#0E3D8B",
-              }}
-              placeholder="Add a caption"
-            />
-            <TouchableOpacity
-              onPress={uploadImage}
-              style={{
-                borderRadius: 40,
-                backgroundColor: "#0E3D8B",
-                width: "50%",
-                color: "#fff",
-                padding: 10,
-                border: "none",
-                outline: "none",
-                marginTop: 20,
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignContent: "center",
-                  alignItems: "center",
-                  fontFamily: "sans-serif",
-                  fontWeight: "bold",
-                  color: "#fff",
-                }}
-              >
-                Upload
-              </Text>
-            </TouchableOpacity>
-          </>
-        )} */}
-          {console.log(
-            "VEIDO URI IN JSX=============",
-            vUri ? vUri : "no videoUri"
-          )}
-          {/* {videoUri ? (
-          <Video
-            source={{ uri: videoUri }}
-            style={{ width: 200, height: 200 }}
-            controls={true}
-          />
-        ) : (
-          <></>
-        )} */}
+
           <TextInput
             style={{
               top: 20,
               position: "relative",
-              backgroundColor: "transparent",
               borderStyle: "solid",
               borderColor: "grey",
               borderWidth: 1,
               padding: 10,
               height: 200,
               width: "100%",
-              outline: "none",
               borderRadius: 5,
             }}
             placeholder="Add caption...."
             value={caption}
             onChangeText={(text) => setCaption(text)}
           />
-          {!uploading ? (
-            <Button
-              style={{ top: 20, position: "relative" }}
-              title="Upload Image"
-              onPress={uploadImage}
-            />
-          ) : (
-            <ActivityIndicator size={"small"} color="black" />
+          {postType == "image" && (
+            <View>
+              {!uploading ? (
+                <Button
+                  style={{ top: 20, position: "relative" }}
+                  title="Upload Image"
+                  onPress={uploadImage}
+                />
+              ) : (
+                <ActivityIndicator size={"small"} color="black" />
+              )}
+            </View>
           )}
           {loading && (
             <>
@@ -370,13 +307,14 @@ const UploadScreen = ({ route }) => {
           )}
 
           <View style={styles.container}>
-            <Button
-              style={{ top: 30, position: "relative" }}
-              title="Upload Video"
-              onPress={uploadVideo}
-            />
+            {postType == "video" && (
+              <Button
+                style={{ top: 30, position: "relative" }}
+                title="Upload Video"
+                onPress={uploadVideo}
+              />
+            )}
           </View>
-          {/* <Button title='Select Image' onPress={pickImage} /> */}
         </View>
       </View>
     </ScrollView>

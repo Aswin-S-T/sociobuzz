@@ -34,6 +34,7 @@ import { BACKEND_URL } from "./src/Constants/Api";
 import RegistrationScreen from "./src/Screens/RegistrationScreen";
 import ForegotPassword from "./src/Screens/ForegotPassword";
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
