@@ -199,16 +199,25 @@ module.exports = {
           if (posts) {
             const userIds = posts.map((post) => post.userId);
             await User.find({ _id: { $in: userIds } }).then((users) => {
-              const userIdToUsername = {};
+              const userIdToUser = {};
               users.forEach((user) => {
-                userIdToUsername[user._id] = user.username;
+                userIdToUser[user._id] = user;
               });
+
               const postsWithUsername = posts.map((post) => {
+                const user = userIdToUser[post.userId];
+                const following = user?.following || [];
+                const isFollowing = following.some((follower) =>
+                  follower._id.equals(post.userId)
+                );
+
                 return {
                   ...post["_doc"],
-                  username: userIdToUsername[post.userId],
+                  username: user?.username,
+                  following: isFollowing,
                 };
               });
+
               successResponse.data = postsWithUsername;
               resolve(successResponse);
             });
