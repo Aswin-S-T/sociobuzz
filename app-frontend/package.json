@@ -35,10 +35,13 @@
     "react-native-screens": "^3.29.0",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-vector-icons": "^10.0.3",
+    "react-native-video": "^5.2.1",
     "react-native-web": "~0.19.6",
     "react-navigation-material-bottom-tabs": "^2.3.5",
     "socket.io-client": "^4.7.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "expo-document-picker": "~11.5.4",
+    "expo-crypto": "~12.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
