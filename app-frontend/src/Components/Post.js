@@ -32,6 +32,7 @@ const Post = ({ newpost }) => {
   const [isSaved, setIsSaved] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [savedList, setSavedList] = useState([]);
+  const [sent, setSent] = useState(false);
 
   const formatTimeDifference = (time) => {
     const currentTime = new Date();
@@ -200,6 +201,30 @@ const Post = ({ newpost }) => {
     }
   };
 
+  const sendRequest = async (userId) => {
+    let followData = { toId: userId, fromId: uid };
+
+    setSent(true);
+
+    const response = await fetch(
+      "https://sociobuzz.onrender.com/api/v1/user/follow",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(followData),
+      }
+    );
+
+    const data = await response.json();
+    ToastAndroid.showWithGravity(
+      "You are following",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  };
+
   return (
     <ScrollView>
       {newpost && (
@@ -225,7 +250,10 @@ const Post = ({ newpost }) => {
             </Text>
 
             {newpost?.following == false && (
-              <TouchableOpacity style={styles.followBtn}>
+              <TouchableOpacity
+                style={styles.followBtn}
+                onPress={() => sendRequest(newpost?._id)}
+              >
                 <Text style={{ color: "white" }}>Follow+</Text>
               </TouchableOpacity>
             )}
