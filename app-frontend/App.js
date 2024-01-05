@@ -107,10 +107,10 @@ export default function App() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <NavigationContainer>
-        <Stack.Navigator
+        {/* <Stack.Navigator
           initialRouteName={loggedIn == true ? "Crowdly" : "Login"}
-        >
-          {/* <Stack.Navigator> */}
+        > */}
+        <Stack.Navigator initialRouteName="Crowdly">
           <Stack.Screen
             name="Crowdly"
             component={HomeScreen}

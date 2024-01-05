@@ -60,7 +60,9 @@ const Post = ({ newpost }) => {
       try {
         setLoading(true);
         const storedData = await AsyncStorage.getItem("userData");
-
+        if (storedData) {
+          setUid(storedData);
+        }
         let url = `https://sociobuzz.onrender.com/api/v1/user/details/${uid}`;
 
         const response = await fetch(url);
@@ -221,6 +223,12 @@ const Post = ({ newpost }) => {
             >
               {formatTimeDifference(newpost?.time)}
             </Text>
+
+            {newpost?.following == false && (
+              <TouchableOpacity style={styles.followBtn}>
+                <Text style={{ color: "white" }}>Follow+</Text>
+              </TouchableOpacity>
+            )}
             {/* <TouchableOpacity onPress={handleOptionsPress}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
@@ -261,7 +269,10 @@ const Post = ({ newpost }) => {
               onClose={() => setShowEnlargedImage(false)}
             />
           )}
-          <TouchableOpacity onPress={handleLikedUsersPress} style={{top:-25,position:'relative'}}>
+          <TouchableOpacity
+            onPress={handleLikedUsersPress}
+            style={{ top: -25, position: "relative" }}
+          >
             <View style={{ margin: 10 }}>
               <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
                 Liked by {newpost?.like?.length} peoples
@@ -392,13 +403,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 5,
-    top:-35,
-    position:'relative'
+    top: -35,
+    position: "relative",
   },
   actionContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
+  followBtn: {
+    padding: 8,
+    backgroundColor: "darkcyan",
+    color: "white",
+    borderRadius: 10,
+    // minWidth: 80,
+  },
 });
 
-export default Post;
+// export default Post;
+export default React.memo(Post);
