@@ -53,7 +53,7 @@ const Landing = () => {
       "https://sociobuzz.onrender.com/api/v1/user/all-post"
     );
     const data = await response?.json();
-    
+
     const modifiedData = data?.data.map((post) => ({
       ...post,
       saved: savedList.includes(post._id),
@@ -83,29 +83,6 @@ const Landing = () => {
         </>
       ) : (
         <>
-          {/* <Video
-            ref={video}
-            // style={styles.video}
-            style={{width:400,height:400}}
-            source={{
-              uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
-            }}
-            useNativeControls
-            resizeMode={ResizeMode.CONTAIN}
-            isLooping
-            onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-          />
-          <View>
-            <Button
-              title={status.isPlaying ? "Pause" : "Play"}
-              onPress={() =>
-                status.isPlaying
-                  ? video.current.pauseAsync()
-                  : video.current.playAsync()
-              }
-            />
-          </View> */}
-          {console.log('Post------------', posts)}
           <FlatList
             data={posts}
             renderItem={({ item }) => <Post newpost={item} />}
