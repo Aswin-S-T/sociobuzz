@@ -311,6 +311,7 @@ module.exports = {
         message: { text: message },
         users: [from, to],
         sender: from,
+        messageType: req.body.messageType,
       });
 
       if (data) return res.json({ msg: "Message added successfully." });
