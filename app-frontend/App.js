@@ -10,6 +10,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -34,7 +35,6 @@ import { BACKEND_URL } from "./src/Constants/Api";
 import RegistrationScreen from "./src/Screens/RegistrationScreen";
 import ForegotPassword from "./src/Screens/ForegotPassword";
 
-
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -43,6 +43,7 @@ export default function App() {
   const [users, setUsers] = useState([]);
   const [uid, setUid] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -53,11 +54,17 @@ export default function App() {
 
   useEffect(() => {
     const initial = async () => {
-      const storedData = await AsyncStorage.getItem("userData");
-      if (storedData && storedData.trim() !== "") {
-        setLoggedIn(true);
-      } else {
-        setLoggedIn(false);
+      try {
+        const storedData = await AsyncStorage.getItem("userData");
+        if (storedData && storedData.trim() !== "") {
+          setLoggedIn(true);
+        } else {
+          setLoggedIn(false);
+        }
+      } catch (error) {
+        console.error("Error checking login status:", error);
+      } finally {
+        setLoading(false);
       }
     };
     initial();
@@ -102,16 +109,21 @@ export default function App() {
     }
   };
 
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName={loggedIn == true ? "Crowdly" : "Login"}
-        >
-          {/* <Stack.Navigator initialRouteName="Crowdly"> */}
+        <Stack.Navigator initialRouteName={loggedIn ? "Crowdly" : "Login"}>
           <Stack.Screen
             name="Crowdly"
             component={HomeScreen}
