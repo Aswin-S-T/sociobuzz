@@ -58,7 +58,6 @@ const Story = () => {
     <TouchableOpacity
       style={styles.storyContainer}
       onPress={() => {
-        console.log("ITEM---------->", item);
         setSelectedStory(item);
         setModalVisible(true);
       }}
