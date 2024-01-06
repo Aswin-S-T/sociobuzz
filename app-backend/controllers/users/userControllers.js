@@ -191,41 +191,42 @@ module.exports = {
     });
   },
 
-  allPost: () => {
-    return new Promise(async (resolve, reject) => {
-      await Post.find()
+  allPost: async (page, pageSize) => {
+    try {
+      const posts = await Post.find()
         .sort({ createdAt: -1 })
-        .then(async (posts) => {
-          if (posts) {
-            const userIds = posts.map((post) => post.userId);
-            await User.find({ _id: { $in: userIds } }).then((users) => {
-              const userIdToUser = {};
-              users.forEach((user) => {
-                userIdToUser[user._id] = user;
-              });
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .exec();
 
-              const postsWithUsername = posts.map((post) => {
-                const user = userIdToUser[post.userId];
-                const following = user?.following || [];
-                const isFollowing = following.some((follower) =>
-                  follower._id.equals(post.userId)
-                );
+      const userIds = posts.map((post) => post.userId);
+      const users = await User.find({ _id: { $in: userIds } }).exec();
 
-                return {
-                  ...post["_doc"],
-                  username: user?.username,
-                  following: isFollowing,
-                };
-              });
+      const userIdToUser = {};
+      users.forEach((user) => {
+        userIdToUser[user._id] = user;
+      });
 
-              successResponse.data = postsWithUsername;
-              resolve(successResponse);
-            });
-          } else {
-            resolve(errorResponse);
-          }
-        });
-    });
+      const postsWithUsername = posts.map((post) => {
+        const user = userIdToUser[post.userId];
+        const following = user?.following || [];
+        const isFollowing = following.some((follower) =>
+          follower._id.equals(post.userId)
+        );
+
+        return {
+          ...post["_doc"],
+          username: user?.username,
+          following: isFollowing,
+        };
+      });
+
+      successResponse.data = postsWithUsername;
+      return successResponse;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      return errorResponse;
+    }
   },
 
   addComment: (postId, comment) => {
