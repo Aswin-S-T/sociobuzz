@@ -119,7 +119,9 @@ userRouter.get("/all-users", async (req, res) => {
 });
 
 userRouter.get("/all-post", async (req, res) => {
-  allPost().then((response) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10
+  allPost(page, pageSize).then((response) => {
     res.send(response);
   });
 });
