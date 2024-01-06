@@ -268,7 +268,13 @@ const Post = ({ newpost }) => {
           <Text style={styles.postComment}>{newpost?.caption}</Text>
 
           {newpost.imageType == "Video" ? (
-            <View style={{ backgroundColor: "black" }}>
+            <View
+              style={{
+                backgroundColor: "black",
+                top: -20,
+                position: "relative",
+              }}
+            >
               <Video
                 ref={video}
                 style={{
@@ -339,16 +345,7 @@ const Post = ({ newpost }) => {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            onPress={handleLikedUsersPress}
-            style={{ top: -25, position: "relative" }}
-          >
-            <View style={{ margin: 10, top: 8, position: "relative" }}>
-              <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
-                Liked by {newpost?.like?.length} peoples
-              </Text>
-            </View>
-          </TouchableOpacity>
+
           {showLikedUsers && (
             <LikedUsersPopup
               postId={newpost?._id}
@@ -364,6 +361,16 @@ const Post = ({ newpost }) => {
               onClose={() => setShowComments(false)}
             />
           )}
+          <TouchableOpacity
+            onPress={handleLikedUsersPress}
+            style={{ top: 0, position: "relative" }}
+          >
+            <View style={{ margin: 10, top: 0, position: "relative" }}>
+              <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
+                Liked by {newpost?.like?.length} peoples
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
       )}
     </ScrollView>
@@ -436,7 +443,7 @@ const styles = StyleSheet.create({
   postActions: {
     flexDirection: "row",
     justifyContent: "space-around",
-    padding: 5,
+    padding: 8,
     top: 0,
     position: "relative",
   },
