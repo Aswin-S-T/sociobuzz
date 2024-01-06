@@ -28,6 +28,7 @@ const {
   foregotPassword,
   verifyOTP,
   changePassword,
+  getAllMessages,
 } = require("../controllers/users/userControllers");
 const Post = require("../models/post/postSchema");
 const Story = require("../models/story/StorySchema");
@@ -120,7 +121,7 @@ userRouter.get("/all-users", async (req, res) => {
 
 userRouter.get("/all-post", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10
+  const pageSize = parseInt(req.query.pageSize) || 10;
   allPost(page, pageSize).then((response) => {
     res.send(response);
   });
@@ -331,6 +332,12 @@ userRouter.post("/edit-profile/:userId", async (req, res) => {
 
 userRouter.get("/saved-post/:userId", async (req, res) => {
   savedPost(req.params.userId).then((response) => {
+    res.send(response);
+  });
+});
+
+userRouter.get("/all-messages", async (req, res) => {
+  getAllMessages(req.query).then((response) => {
     res.send(response);
   });
 });

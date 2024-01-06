@@ -575,4 +575,11 @@ module.exports = {
       });
     });
   },
+  getAllMessages: (query) => {
+    return new Promise((resolve, reject) => {
+      let chatIds = [query?.fromId, query?.toId];
+      console.log("chatids-----------", chatIds);
+      // Messages
+    });
+  },
 };
