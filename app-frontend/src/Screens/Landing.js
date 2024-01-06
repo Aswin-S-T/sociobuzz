@@ -19,7 +19,7 @@ const Landing = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        setLoading(true);
+        // setLoading(true);
         const storedData = await AsyncStorage.getItem("userData");
         if (storedData) {
           setUid(storedData);
@@ -33,7 +33,7 @@ const Landing = () => {
           let saved_data = data?.data?.saved_post;
           setSavedList(saved_data);
 
-          setLoading(false);
+          // setLoading(false);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -105,6 +105,7 @@ const Landing = () => {
               }
             />
           </View> */}
+          {console.log('Post------------', posts)}
           <FlatList
             data={posts}
             renderItem={({ item }) => <Post newpost={item} />}

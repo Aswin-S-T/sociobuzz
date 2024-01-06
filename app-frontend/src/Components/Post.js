@@ -273,7 +273,7 @@ const Post = ({ newpost }) => {
                 ref={video}
                 style={{
                   width: "100%",
-                  height: windowWidth,
+                  height: 500,
                 }}
                 source={{
                   uri: newpost?.image,
@@ -303,16 +303,7 @@ const Post = ({ newpost }) => {
               onClose={() => setShowEnlargedImage(false)}
             />
           )}
-          <TouchableOpacity
-            onPress={handleLikedUsersPress}
-            style={{ top: -25, position: "relative" }}
-          >
-            <View style={{ margin: 10 }}>
-              <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
-                Liked by {newpost?.like?.length} peoples
-              </Text>
-            </View>
-          </TouchableOpacity>
+
           <View style={styles.postActions}>
             <TouchableOpacity>
               <View style={styles.actionContainer}>
@@ -348,7 +339,16 @@ const Post = ({ newpost }) => {
               />
             </TouchableOpacity>
           </View>
-
+          <TouchableOpacity
+            onPress={handleLikedUsersPress}
+            style={{ top: -25, position: "relative" }}
+          >
+            <View style={{ margin: 10, top: 8, position: "relative" }}>
+              <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
+                Liked by {newpost?.like?.length} peoples
+              </Text>
+            </View>
+          </TouchableOpacity>
           {showLikedUsers && (
             <LikedUsersPopup
               postId={newpost?._id}
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 5,
-    top: -35,
+    top: 0,
     position: "relative",
   },
   actionContainer: {
