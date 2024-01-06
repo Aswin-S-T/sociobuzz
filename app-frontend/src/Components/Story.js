@@ -23,6 +23,28 @@ const Story = () => {
   const [selectedStory, setSelectedStory] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const formatTimeDifference = (time) => {
+    const currentTime = new Date();
+    const likedTime = new Date(time);
+    const differenceInSeconds = Math.floor((currentTime - likedTime) / 1000);
+
+    if (differenceInSeconds < 60) {
+      return `${differenceInSeconds} seconds ago`;
+    } else if (differenceInSeconds < 3600) {
+      const minutes = Math.floor(differenceInSeconds / 60);
+      return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+    } else if (differenceInSeconds < 86400) {
+      const hours = Math.floor(differenceInSeconds / 3600);
+      return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+    } else if (differenceInSeconds < 2592000) {
+      const days = Math.floor(differenceInSeconds / 86400);
+      return `${days} ${days === 1 ? "day" : "days"} ago`;
+    } else {
+      const months = Math.floor(differenceInSeconds / 2592000);
+      return `${months} ${months === 1 ? "month" : "months"} ago`;
+    }
+  };
+
   useEffect(() => {
     const fetchStory = async () => {
       const response = await fetch(`${BACKEND_URL}/api/v1/user/get-story`);
@@ -36,7 +58,7 @@ const Story = () => {
     <TouchableOpacity
       style={styles.storyContainer}
       onPress={() => {
-        setSelectedStory(item.story);
+        setSelectedStory(item);
         setModalVisible(true);
       }}
     >
@@ -129,16 +151,43 @@ const Story = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
+          <View style={styles.modelHeader}>
+            <View>
+              <Text
+                style={{
+                  color: "white",
+                  fontFamily: "sans-serif",
+                  fontSize: 18,
+                  top: 20,
+                  position: "relative",
+                  fontWeight: "bold",
+                }}
+              >
+                {selectedStory?.username}
+              </Text>
+              <Text
+                style={{
+                  color: "white",
+                  fontFamily: "sans-serif",
+                  fontSize: 10,
+                  top: 20,
+                  position: "relative",
+                }}
+              >
+                {formatTimeDifference(selectedStory?.createdAt)}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={styles.closeButton}
+            >
+              <AntDesign name="closecircle" size={20} color="white" />
+            </TouchableOpacity>
+          </View>
           <Image
-            source={{ uri: selectedStory }}
+            source={{ uri: selectedStory?.story }}
             style={styles.selectedStoryImage}
           />
-          <TouchableOpacity
-            onPress={() => setModalVisible(false)}
-            style={styles.closeButton}
-          >
-            <AntDesign name="closecircle" size={30} color="white" />
-          </TouchableOpacity>
         </View>
       </Modal>
     </View>
@@ -174,8 +223,35 @@ const styles = StyleSheet.create({
   },
   selectedStoryImage: {
     width: "100%",
-    height: "90%",
+    height: "50%",
     resizeMode: "cover",
+  },
+  modalContainer: {
+    display: "flex",
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    top: 10,
+    position: "relative",
+    backgroundColor: "#1D1919",
+    height: "100%",
+  },
+  modelHeader: {
+    height: 80,
+    padding: 10,
+    backgroundColor: "black",
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    top: -5,
+    position: "absolute",
+    margin: 10,
+  },
+  closeButton: {
+    top: 25,
+    left: -10,
+    position: "relative",
   },
 });
 

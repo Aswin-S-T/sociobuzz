@@ -268,12 +268,18 @@ const Post = ({ newpost }) => {
           <Text style={styles.postComment}>{newpost?.caption}</Text>
 
           {newpost.imageType == "Video" ? (
-            <View style={{ backgroundColor: "black" }}>
+            <View
+              style={{
+                backgroundColor: "black",
+                top: -20,
+                position: "relative",
+              }}
+            >
               <Video
                 ref={video}
                 style={{
                   width: "100%",
-                  height: windowWidth,
+                  height: 500,
                 }}
                 source={{
                   uri: newpost?.image,
@@ -303,16 +309,7 @@ const Post = ({ newpost }) => {
               onClose={() => setShowEnlargedImage(false)}
             />
           )}
-          <TouchableOpacity
-            onPress={handleLikedUsersPress}
-            style={{ top: -25, position: "relative" }}
-          >
-            <View style={{ margin: 10 }}>
-              <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
-                Liked by {newpost?.like?.length} peoples
-              </Text>
-            </View>
-          </TouchableOpacity>
+
           <View style={styles.postActions}>
             <TouchableOpacity>
               <View style={styles.actionContainer}>
@@ -364,6 +361,16 @@ const Post = ({ newpost }) => {
               onClose={() => setShowComments(false)}
             />
           )}
+          <TouchableOpacity
+            onPress={handleLikedUsersPress}
+            style={{ top: 0, position: "relative" }}
+          >
+            <View style={{ margin: 10, top: 0, position: "relative" }}>
+              <Text style={{ color: "grey", fontFamily: "sans-serif" }}>
+                Liked by {newpost?.like?.length} peoples
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
       )}
     </ScrollView>
@@ -436,8 +443,8 @@ const styles = StyleSheet.create({
   postActions: {
     flexDirection: "row",
     justifyContent: "space-around",
-    padding: 5,
-    top: -35,
+    padding: 8,
+    top: 0,
     position: "relative",
   },
   actionContainer: {

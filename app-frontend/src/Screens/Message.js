@@ -52,7 +52,7 @@ const AllMessagesScreen = ({ navigation }) => {
         setUid(storedData);
       }
 
-      fetch(`${BACKEND_URL}/api/v1/user/chat-users/${uid}`) 
+      fetch(`${BACKEND_URL}/api/v1/user/chat-users/${uid}`)
         .then((res) => res.json())
         .then((data) => {
           if (data) {
@@ -95,7 +95,7 @@ const AllMessagesScreen = ({ navigation }) => {
           </Pressable>
         </View>
       </View>
-      {console.log("ROOMS===========>", rooms ? rooms : "no rooms")}
+
       <View style={styles.chatlistContainer}>
         {rooms?.length > 0 ? (
           <FlatList

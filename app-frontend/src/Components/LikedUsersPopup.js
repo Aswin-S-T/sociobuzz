@@ -7,7 +7,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Image,
 } from "react-native";
+import { AntDesign } from '@expo/vector-icons'; 
+
 
 const formatTimeDifference = (time) => {
   const currentTime = new Date();
@@ -36,25 +39,50 @@ const LikedUsersPopup = ({ postId, likedUsers, onClose }) => {
     <Modal transparent={true} animationType="slide" visible={true}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Liked Users</Text>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={styles.modalTitle}>Liked Users</Text>
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <AntDesign name="closecircleo" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
 
-          <FlatList
-            data={likedUsers}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.userContainer}>
-                <Text>{item.username}</Text>
-                <Text style={styles.timeAgo}>
-                  {formatTimeDifference(item.time)}
-                </Text>
-              </View>
-            )}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
-
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
+          {likedUsers?.length == 0 ? (
+            <View
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={{
+                  uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1hoxm5GI6EjXkkgBSTGO7ZaEBTeEQGAXR4g&usqp=CAU",
+                }}
+                style={{ height: 80, width: 80 }}
+              />
+              <Text style={{ fontSize: 18, color: "grey" }}>No likes yet</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={likedUsers}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.userContainer}>
+                  <Text>{item.username}</Text>
+                  <Text style={styles.timeAgo}>
+                    {formatTimeDifference(item.time)}
+                  </Text>
+                </View>
+              )}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+            />
+          )}
         </View>
       </View>
     </Modal>
@@ -94,14 +122,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   closeButton: {
-    backgroundColor: "#007BFF",
-    padding: 10,
+    backgroundColor: "#fff",
+  
     borderRadius: 5,
     alignItems: "center",
-    marginTop: 10,
+   
+    
   },
   closeButtonText: {
-    color: "white",
+    color: "#111",
     fontWeight: "bold",
   },
 });

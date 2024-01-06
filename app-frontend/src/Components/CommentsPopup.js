@@ -9,8 +9,10 @@ import {
   ScrollView,
   TextInput,
   ToastAndroid,
+  Image,
 } from "react-native";
 import { BACKEND_URL } from "../Constants/Api";
+import { AntDesign } from "@expo/vector-icons";
 
 const CommentsPopup = ({ postId, comments, onClose }) => {
   const [comment, setComment] = useState("");
@@ -72,9 +74,20 @@ const CommentsPopup = ({ postId, comments, onClose }) => {
     <Modal transparent={true} animationType="slide" visible={true}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Comments</Text>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={styles.modalTitle}>All comments</Text>
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <AntDesign name="closecircleo" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
 
-          {comments && comments?.length > 0 && (
+          {comments && comments?.length > 0 ? (
             <FlatList
               data={comments}
               keyExtractor={(item, index) => index.toString()}
@@ -109,6 +122,22 @@ const CommentsPopup = ({ postId, comments, onClose }) => {
               )}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
+          ) : (
+            <View
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={{
+                  uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1hoxm5GI6EjXkkgBSTGO7ZaEBTeEQGAXR4g&usqp=CAU",
+                }}
+                style={{ height: 80, width: 80 }}
+              />
+              <Text style={{ fontSize: 18, color: "grey" }}>No comments yet</Text>
+            </View>
           )}
 
           <View
@@ -197,13 +226,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   closeButton: {
-    backgroundColor: "#007BFF",
-    padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    marginTop: 10,
-    top: 20,
-    position: "relative",
+   
   },
   closeButtonText: {
     color: "white",

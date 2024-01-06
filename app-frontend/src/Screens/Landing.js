@@ -19,7 +19,7 @@ const Landing = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        setLoading(true);
+        // setLoading(true);
         const storedData = await AsyncStorage.getItem("userData");
         if (storedData) {
           setUid(storedData);
@@ -33,7 +33,7 @@ const Landing = () => {
           let saved_data = data?.data?.saved_post;
           setSavedList(saved_data);
 
-          setLoading(false);
+          // setLoading(false);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -53,7 +53,7 @@ const Landing = () => {
       "https://sociobuzz.onrender.com/api/v1/user/all-post"
     );
     const data = await response?.json();
-    
+
     const modifiedData = data?.data.map((post) => ({
       ...post,
       saved: savedList.includes(post._id),
@@ -83,28 +83,6 @@ const Landing = () => {
         </>
       ) : (
         <>
-          {/* <Video
-            ref={video}
-            // style={styles.video}
-            style={{width:400,height:400}}
-            source={{
-              uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
-            }}
-            useNativeControls
-            resizeMode={ResizeMode.CONTAIN}
-            isLooping
-            onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-          />
-          <View>
-            <Button
-              title={status.isPlaying ? "Pause" : "Play"}
-              onPress={() =>
-                status.isPlaying
-                  ? video.current.pauseAsync()
-                  : video.current.playAsync()
-              }
-            />
-          </View> */}
           <FlatList
             data={posts}
             renderItem={({ item }) => <Post newpost={item} />}
