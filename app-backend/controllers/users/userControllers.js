@@ -191,32 +191,40 @@ module.exports = {
     });
   },
 
-  allPost: () => {
-    return new Promise(async (resolve, reject) => {
-      await Post.find()
+  allPost: async (page, limit) => {
+    const skip = (page - 1) * limit;
+    console.log("PAGE------------", page, limit);
+    try {
+      const posts = await Post.find()
         .sort({ createdAt: -1 })
-        .then(async (posts) => {
-          if (posts) {
-            const userIds = posts.map((post) => post.userId);
-            await User.find({ _id: { $in: userIds } }).then((users) => {
-              const userIdToUsername = {};
-              users.forEach((user) => {
-                userIdToUsername[user._id] = user.username;
-              });
-              const postsWithUsername = posts.map((post) => {
-                return {
-                  ...post["_doc"],
-                  username: userIdToUsername[post.userId],
-                };
-              });
-              successResponse.data = postsWithUsername;
-              resolve(successResponse);
-            });
-          } else {
-            resolve(errorResponse);
-          }
+        .skip(skip)
+        .limit(limit);
+
+      if (posts.length > 0) {
+        const userIds = posts.map((post) => post.userId);
+        const users = await User.find({ _id: { $in: userIds } });
+
+        const userIdToUsername = {};
+        users.forEach((user) => {
+          userIdToUsername[user._id] = user.username;
         });
-    });
+
+        const postsWithUsername = posts.map((post) => {
+          return {
+            ...post["_doc"],
+            username: userIdToUsername[post.userId],
+          };
+        });
+
+        successResponse.data = postsWithUsername;
+        return successResponse;
+      } else {
+        return errorResponse;
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   },
 
   addComment: (postId, comment) => {

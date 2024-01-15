@@ -144,9 +144,17 @@ userRouter.get("/all-users", async (req, res) => {
 });
 
 userRouter.get("/all-post", async (req, res) => {
-  allPost().then((response) => {
+  const { page = 1, limit = 4 } = req.query;
+  // allPost().then((response) => {
+  //   res.send(response);
+  // });
+  try {
+    const response = await allPost(page, limit);
     res.send(response);
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 userRouter.post("/all", async (req, res) => {
